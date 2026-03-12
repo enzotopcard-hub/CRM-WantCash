@@ -1,664 +1,824 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>WantCash — Painel de Atendimento</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-<style>
-* { box-sizing: border-box; margin: 0; padding: 0; }
-body { font-family: Inter, sans-serif; background: #111b21; color: #e9edef; height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
-
-/* LOGIN */
-#login-screen { display: flex; align-items: center; justify-content: center; height: 100vh; background: #111b21; }
-.login-box { background: #202c33; border-radius: 12px; padding: 40px 36px; width: 400px; display: flex; flex-direction: column; gap: 16px; box-shadow: 0 8px 32px rgba(0,0,0,0.4); }
-.login-logo { display: flex; align-items: center; justify-content: center; margin-bottom: 4px; }
-.login-logo img { height: 64px; border-radius: 8px; }
-.login-title { text-align: center; font-size: 17px; font-weight: 600; color: #e9edef; }
-.login-sub { text-align: center; font-size: 13px; color: #8696a0; margin-top: -8px; }
-.field label { display: block; font-size: 12px; color: #8696a0; margin-bottom: 5px; font-weight: 500; }
-.field input { width: 100%; background: #2a3942; border: 1px solid #3b4a54; border-radius: 8px; padding: 10px 12px; color: #e9edef; font-family: Inter, sans-serif; font-size: 14px; outline: none; transition: border-color 0.2s; }
-.field input:focus { border-color: #00a884; }
-.btn-login { background: #00a884; color: #fff; border: none; border-radius: 8px; padding: 12px; font-family: Inter, sans-serif; font-weight: 600; font-size: 14px; cursor: pointer; transition: background 0.2s; }
-.btn-login:hover { background: #008f72; }
-.error-msg { font-size: 12px; color: #f87171; display: none; text-align: center; }
-
-/* APP */
-#app { display: none; height: 100vh; flex-direction: row; }
-
-/* SIDEBAR */
-.sidebar { width: 380px; border-right: 1px solid #2a3942; background: #111b21; display: flex; flex-direction: column; flex-shrink: 0; }
-.sidebar-top { background: #202c33; padding: 10px 16px; display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; }
-.sidebar-top-left { display: flex; align-items: center; gap: 10px; }
-.sidebar-avatar { width: 40px; height: 40px; border-radius: 50%; overflow: hidden; }
-.sidebar-avatar img { width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
-.manager-name { font-size: 15px; font-weight: 600; color: #e9edef; }
-.sidebar-top-right { display: flex; gap: 4px; align-items: center; }
-.icon-btn { background: none; border: none; color: #aebac1; cursor: pointer; padding: 7px; border-radius: 50%; font-size: 18px; transition: background 0.15s; display: flex; align-items: center; justify-content: center; }
-.icon-btn:hover { background: #2a3942; color: #e9edef; }
-
-/* SEARCH */
-.sidebar-search { padding: 8px 12px; background: #111b21; flex-shrink: 0; }
-.search-wrap { background: #202c33; border-radius: 8px; display: flex; align-items: center; padding: 7px 12px; gap: 8px; }
-.search-wrap input { background: none; border: none; outline: none; color: #e9edef; font-size: 14px; flex: 1; font-family: Inter, sans-serif; }
-.search-wrap input::placeholder { color: #8696a0; }
-
-/* FILTERS */
-.sidebar-filters { display: flex; gap: 6px; padding: 6px 12px 8px; overflow-x: auto; flex-shrink: 0; scrollbar-width: none; }
-.sidebar-filters::-webkit-scrollbar { display: none; }
-.filter-chip { background: #202c33; border: none; color: #8696a0; border-radius: 20px; padding: 5px 14px; font-size: 12px; font-family: Inter, sans-serif; cursor: pointer; white-space: nowrap; transition: all 0.15s; flex-shrink: 0; }
-.filter-chip.active { background: #00a884; color: #fff; }
-.filter-chip:hover:not(.active) { background: #2a3942; color: #e9edef; }
-
-/* CONV LIST */
-.conv-list { flex: 1; overflow-y: auto; scrollbar-width: thin; scrollbar-color: #2a3942 transparent; }
-.conv-item { display: flex; align-items: center; gap: 12px; padding: 12px 16px; cursor: pointer; border-bottom: 1px solid #1f2c33; transition: background 0.1s; }
-.conv-item:hover { background: #202c33; }
-.conv-item.active { background: #2a3942; }
-.conv-av { width: 49px; height: 49px; border-radius: 50%; background: #2a3942; display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0; color: #8696a0; }
-.conv-body { flex: 1; min-width: 0; }
-.conv-row1 { display: flex; justify-content: space-between; align-items: center; }
-.conv-name { font-size: 15px; font-weight: 500; color: #e9edef; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex: 1; }
-.conv-time { font-size: 11px; color: #8696a0; flex-shrink: 0; margin-left: 8px; }
-.conv-row2 { display: flex; align-items: center; gap: 6px; margin-top: 2px; }
-.conv-preview { font-size: 13px; color: #8696a0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex: 1; }
-.unread-badge { background: #00a884; color: #fff; border-radius: 50%; min-width: 18px; height: 18px; font-size: 11px; font-weight: 600; display: flex; align-items: center; justify-content: center; padding: 0 4px; flex-shrink: 0; }
-.tag-pill { border-radius: 4px; padding: 2px 6px; font-size: 10px; font-weight: 600; flex-shrink: 0; }
-.empty-conv { padding: 40px 20px; text-align: center; color: #8696a0; font-size: 13px; line-height: 1.8; }
-.empty-conv-icon { font-size: 40px; margin-bottom: 12px; }
-
-/* FAB */
-.sidebar-wrapper { position: relative; flex: 1; display: flex; flex-direction: column; overflow: hidden; }
-.fab { position: absolute; bottom: 20px; right: 16px; width: 52px; height: 52px; background: #00a884; border: none; border-radius: 50%; color: #fff; font-size: 26px; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(0,168,132,0.4); transition: background 0.2s; z-index: 10; }
-.fab:hover { background: #008f72; }
-
-/* CHAT */
-.chat-panel { flex: 1; display: flex; flex-direction: column; overflow: hidden; background: #0b141a; }
-.chat-empty-state { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px; color: #8696a0; }
-.chat-empty-state img { width: 72px; opacity: 0.4; border-radius: 10px; }
-.chat-empty-state p { font-size: 14px; }
-
-/* CHAT HEADER */
-.chat-header { background: #202c33; padding: 10px 16px; display: flex; align-items: center; gap: 12px; flex-shrink: 0; border-bottom: 1px solid #2a3942; }
-.chat-header-av { width: 40px; height: 40px; border-radius: 50%; background: #2a3942; display: flex; align-items: center; justify-content: center; font-size: 20px; color: #8696a0; }
-.chat-header-info { flex: 1; cursor: pointer; }
-.chat-header-name { font-size: 15px; font-weight: 600; color: #e9edef; }
-.chat-header-status { font-size: 12px; color: #8696a0; }
-.chat-header-actions { display: flex; gap: 2px; }
-
-/* TAGS ROW */
-.tags-row { background: #1f2c33; padding: 7px 16px; display: flex; gap: 6px; flex-wrap: wrap; align-items: center; flex-shrink: 0; border-bottom: 1px solid #2a3942; min-height: 38px; }
-.tag-badge { border-radius: 12px; padding: 3px 10px; font-size: 11px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 5px; transition: opacity 0.15s; }
-.tag-badge:hover { opacity: 0.75; }
-.tag-x { font-size: 10px; opacity: 0.6; }
-.btn-add-tag { background: transparent; border: 1px dashed #3b4a54; color: #8696a0; border-radius: 12px; padding: 3px 10px; font-size: 11px; cursor: pointer; font-family: Inter, sans-serif; transition: all 0.15s; }
-.btn-add-tag:hover { border-color: #00a884; color: #00a884; }
-.tag-menu { position: fixed; background: #233138; border: 1px solid #3b4a54; border-radius: 10px; padding: 6px; z-index: 300; min-width: 200px; box-shadow: 0 8px 24px rgba(0,0,0,0.5); display: none; }
-.tag-menu.open { display: block; }
-.tag-menu-item { padding: 8px 12px; font-size: 13px; cursor: pointer; border-radius: 6px; display: flex; align-items: center; gap: 10px; transition: background 0.1s; color: #e9edef; }
-.tag-menu-item:hover { background: #2a3942; }
-.tag-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
-
-/* MESSAGES */
-.messages-wrap { flex: 1; overflow-y: auto; padding: 16px 10%; display: flex; flex-direction: column; gap: 2px; scrollbar-width: thin; scrollbar-color: #2a3942 transparent; }
-.msg-day { text-align: center; margin: 10px 0; }
-.msg-day span { background: #182229; color: #8696a0; font-size: 11.5px; border-radius: 6px; padding: 5px 12px; }
-.msg { display: flex; margin-bottom: 2px; }
-.msg.client { justify-content: flex-start; }
-.msg.manager { justify-content: flex-end; }
-.msg-bubble { max-width: 72%; padding: 7px 12px 4px; border-radius: 8px; font-size: 14px; line-height: 1.5; word-break: break-word; }
-.msg.client .msg-bubble { background: #202c33; border-top-left-radius: 0; color: #e9edef; }
-.msg.manager .msg-bubble { background: #005c4b; border-top-right-radius: 0; color: #e9edef; }
-.msg-meta { display: flex; align-items: center; gap: 4px; justify-content: flex-end; margin-top: 4px; }
-.msg-time { font-size: 11px; color: #8696a0; }
-.msg-check { font-size: 12px; color: #53bdeb; }
-.msg-sender { font-size: 11px; color: #00a884; font-weight: 600; margin-bottom: 3px; }
-
-/* INPUT */
-.chat-input-wrap { background: #202c33; padding: 10px 16px; display: flex; align-items: flex-end; gap: 10px; flex-shrink: 0; }
-.chat-input-wrap textarea { flex: 1; background: #2a3942; border: none; border-radius: 10px; padding: 10px 14px; color: #e9edef; font-family: Inter, sans-serif; font-size: 14px; resize: none; outline: none; min-height: 42px; max-height: 120px; line-height: 1.5; }
-.chat-input-wrap textarea::placeholder { color: #8696a0; }
-.btn-send { background: #00a884; color: #fff; border: none; border-radius: 50%; width: 42px; height: 42px; font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: background 0.2s; }
-.btn-send:hover { background: #008f72; }
-.btn-send:disabled { background: #2a3942; color: #8696a0; cursor: not-allowed; }
-
-/* CRM PANEL */
-.crm-panel { width: 0; background: #111b21; border-left: 1px solid #2a3942; display: flex; flex-direction: column; overflow: hidden; flex-shrink: 0; transition: width 0.25s ease; }
-.crm-panel.open { width: 300px; }
-.crm-header { background: #202c33; padding: 14px 16px; display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; border-bottom: 1px solid #2a3942; }
-.crm-header h3 { font-size: 15px; font-weight: 600; color: #e9edef; }
-.crm-body { flex: 1; overflow-y: auto; padding: 14px; display: flex; flex-direction: column; gap: 12px; scrollbar-width: thin; scrollbar-color: #2a3942 transparent; }
-.crm-section { background: #202c33; border-radius: 10px; padding: 14px; }
-.crm-section h4 { font-size: 11px; font-weight: 600; color: #8696a0; text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: 10px; }
-.crm-field label { display: block; font-size: 11px; color: #8696a0; margin-bottom: 4px; }
-.crm-field input, .crm-field textarea { width: 100%; background: #2a3942; border: 1px solid #3b4a54; border-radius: 7px; padding: 8px 10px; color: #e9edef; font-family: Inter, sans-serif; font-size: 13px; outline: none; transition: border-color 0.2s; margin-bottom: 10px; }
-.crm-field input:focus, .crm-field textarea:focus { border-color: #00a884; }
-.crm-field textarea { resize: vertical; min-height: 80px; }
-.btn-save-crm { background: #00a884; color: #fff; border: none; border-radius: 8px; padding: 9px; font-family: Inter, sans-serif; font-weight: 600; font-size: 13px; cursor: pointer; width: 100%; transition: background 0.2s; }
-.btn-save-crm:hover { background: #008f72; }
-.crm-tags-grid { display: flex; flex-direction: column; gap: 7px; }
-.crm-tag-row { display: flex; align-items: center; justify-content: space-between; padding: 7px 10px; border-radius: 8px; background: #2a3942; cursor: pointer; transition: background 0.15s; }
-.crm-tag-row:hover { background: #33444d; }
-.crm-tag-row-left { display: flex; align-items: center; gap: 8px; font-size: 13px; color: #e9edef; }
-.crm-tag-check { width: 18px; height: 18px; border-radius: 50%; border: 2px solid #3b4a54; display: flex; align-items: center; justify-content: center; font-size: 10px; transition: all 0.15s; flex-shrink: 0; }
-.crm-tag-check.on { background: #00a884; border-color: #00a884; color: #fff; }
-.history-item { padding: 8px 0; border-bottom: 1px solid #2a3942; font-size: 12px; color: #8696a0; line-height: 1.5; }
-.history-item:last-child { border-bottom: none; }
-.hi-date { color: #00a884; font-weight: 600; font-size: 11px; display: block; margin-bottom: 2px; }
-.btn-return-bot { background: none; border: 1px solid #3b4a54; color: #8696a0; border-radius: 8px; padding: 9px; font-family: Inter, sans-serif; font-size: 13px; cursor: pointer; width: 100%; transition: all 0.2s; }
-.btn-return-bot:hover { border-color: #f87171; color: #f87171; }
-
-/* TOAST */
-.toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(80px); background: #233138; border: 1px solid #3b4a54; border-radius: 10px; padding: 10px 18px; font-size: 13px; color: #e9edef; opacity: 0; transition: all 0.3s; z-index: 999; white-space: nowrap; }
-.toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
-.toast.success { border-color: #00a884; color: #00a884; }
-.toast.error { border-color: #f87171; color: #f87171; }
-
-/* MODAL */
-.modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.65); display: none; align-items: center; justify-content: center; z-index: 200; }
-.modal-overlay.open { display: flex; }
-.modal-box { background: #233138; border-radius: 12px; padding: 28px; width: 360px; display: flex; flex-direction: column; gap: 14px; }
-.modal-box h3 { font-size: 16px; font-weight: 600; color: #e9edef; }
-.modal-box input { width: 100%; background: #2a3942; border: 1px solid #3b4a54; border-radius: 8px; padding: 10px 12px; color: #e9edef; font-family: Inter, sans-serif; font-size: 14px; outline: none; }
-.modal-box input:focus { border-color: #00a884; }
-.modal-actions { display: flex; gap: 8px; }
-.btn-cancel { flex: 1; background: #2a3942; border: none; color: #8696a0; border-radius: 8px; padding: 10px; font-family: Inter, sans-serif; font-size: 13px; cursor: pointer; }
-.btn-confirm { flex: 1; background: #00a884; border: none; color: #fff; border-radius: 8px; padding: 10px; font-family: Inter, sans-serif; font-weight: 600; font-size: 13px; cursor: pointer; }
-
-::-webkit-scrollbar { width: 4px; } ::-webkit-scrollbar-track { background: transparent; } ::-webkit-scrollbar-thumb { background: #2a3942; border-radius: 2px; }
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Painel WhatsApp Manager</title>
+  <style>
+    :root {
+      --bg: #0b141a;
+      --panel: #111b21;
+      --panel-2: #202c33;
+      --panel-3: #2a3942;
+      --text: #e9edef;
+      --muted: #8696a0;
+      --accent: #25d366;
+      --accent-2: #00a884;
+      --danger: #f15c6d;
+      --warning: #f5c451;
+      --chip: #182229;
+      --card: #202c33;
+      --bubble-me: #005c4b;
+      --bubble-other: #202c33;
+      --border: rgba(255,255,255,.06);
+      --shadow: 0 10px 30px rgba(0,0,0,.22);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      height: 100vh;
+      overflow: hidden;
+    }
+    .app {
+      display: grid;
+      grid-template-columns: 380px 1fr 320px;
+      height: 100vh;
+    }
+    .sidebar, .chat, .rightbar {
+      background: var(--panel);
+      border-right: 1px solid var(--border);
+      min-width: 0;
+    }
+    .rightbar { border-right: none; border-left: 1px solid var(--border); }
+    .topbar {
+      padding: 14px 16px;
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      border-bottom: 1px solid var(--border);
+      background: rgba(17,27,33,.96);
+    }
+    .title { font-size: 18px; font-weight: 700; }
+    .muted { color: var(--muted); }
+    .grow { flex: 1; }
+    input, select, textarea, button {
+      font: inherit;
+    }
+    .login-box {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      width: 100%;
+    }
+    .field {
+      background: #0f171c;
+      color: var(--text);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px 12px;
+      outline: none;
+      min-width: 0;
+    }
+    .field:focus { border-color: rgba(37,211,102,.5); }
+    .btn {
+      border: none;
+      border-radius: 10px;
+      padding: 10px 14px;
+      cursor: pointer;
+      background: var(--panel-3);
+      color: var(--text);
+      transition: .18s ease;
+    }
+    .btn:hover { filter: brightness(1.07); }
+    .btn-primary { background: var(--accent-2); color: #fff; }
+    .btn-danger { background: #5a1f28; color: #ffd9de; }
+    .btn-ghost { background: transparent; border: 1px solid var(--border); }
+    .tabs {
+      display: flex;
+      gap: 8px;
+      padding: 12px 12px 8px;
+      border-bottom: 1px solid var(--border);
+      flex-wrap: wrap;
+    }
+    .tab {
+      padding: 9px 12px;
+      border-radius: 999px;
+      background: var(--chip);
+      color: var(--muted);
+      cursor: pointer;
+      font-size: 13px;
+      border: 1px solid transparent;
+    }
+    .tab.active {
+      color: #fff;
+      background: rgba(37,211,102,.13);
+      border-color: rgba(37,211,102,.22);
+    }
+    .filters {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 8px;
+      padding: 12px;
+      border-bottom: 1px solid var(--border);
+    }
+    .conversation-list {
+      overflow: auto;
+      height: calc(100vh - 170px);
+    }
+    .conversation-item {
+      display: grid;
+      grid-template-columns: 52px 1fr auto;
+      gap: 12px;
+      padding: 14px 14px;
+      border-bottom: 1px solid var(--border);
+      cursor: pointer;
+      transition: background .18s ease;
+    }
+    .conversation-item:hover, .conversation-item.active { background: rgba(255,255,255,.03); }
+    .avatar {
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #1f2c34, #2a3942);
+      display: grid;
+      place-items: center;
+      font-weight: 700;
+      color: #d3dfe4;
+    }
+    .conv-top {
+      display: flex;
+      gap: 8px;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 4px;
+    }
+    .conv-name { font-weight: 700; }
+    .conv-time { color: var(--muted); font-size: 12px; white-space: nowrap; }
+    .conv-last {
+      color: var(--muted);
+      font-size: 13px;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    .chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+    .chip {
+      background: var(--chip);
+      color: #cdd6da;
+      border-radius: 999px;
+      padding: 4px 8px;
+      font-size: 11px;
+      border: 1px solid var(--border);
+    }
+    .badge {
+      min-width: 22px;
+      height: 22px;
+      border-radius: 999px;
+      display: grid;
+      place-items: center;
+      background: var(--accent);
+      color: #08261b;
+      font-size: 12px;
+      font-weight: 700;
+      align-self: center;
+    }
+    .chat {
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+      background: #0f171c;
+    }
+    .chat-header {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      padding: 14px 16px;
+      background: var(--panel);
+      border-bottom: 1px solid var(--border);
+    }
+    .chat-header-actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-left: auto;
+    }
+    .messages {
+      overflow: auto;
+      padding: 18px;
+      background-image:
+        radial-gradient(rgba(255,255,255,.018) 1px, transparent 1px),
+        radial-gradient(rgba(255,255,255,.016) 1px, transparent 1px);
+      background-position: 0 0, 25px 25px;
+      background-size: 50px 50px;
+    }
+    .empty {
+      display: grid;
+      place-items: center;
+      height: 100%;
+      color: var(--muted);
+      text-align: center;
+      padding: 24px;
+    }
+    .message-row {
+      display: flex;
+      margin: 8px 0;
+    }
+    .message-row.me { justify-content: flex-end; }
+    .bubble {
+      max-width: 78%;
+      padding: 10px 12px 8px;
+      border-radius: 12px;
+      background: var(--bubble-other);
+      box-shadow: var(--shadow);
+      border: 1px solid var(--border);
+    }
+    .message-row.me .bubble {
+      background: var(--bubble-me);
+      border-color: rgba(255,255,255,.05);
+    }
+    .meta {
+      display: flex;
+      gap: 8px;
+      justify-content: flex-end;
+      margin-top: 6px;
+      color: rgba(255,255,255,.72);
+      font-size: 11px;
+    }
+    .composer {
+      padding: 14px;
+      background: var(--panel);
+      border-top: 1px solid var(--border);
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 10px;
+      align-items: end;
+    }
+    textarea.field {
+      min-height: 52px;
+      max-height: 160px;
+      resize: vertical;
+      width: 100%;
+    }
+    .rightbar {
+      overflow: auto;
+    }
+    .panel-block {
+      padding: 16px;
+      border-bottom: 1px solid var(--border);
+    }
+    .section-title {
+      font-size: 14px;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+    .stats-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+    .stat-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 14px;
+    }
+    .stat-value { font-size: 24px; font-weight: 800; margin-top: 6px; }
+    .progress {
+      width: 100%;
+      height: 10px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.06);
+      overflow: hidden;
+      margin-top: 8px;
+    }
+    .progress > span {
+      display: block;
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent-2), var(--accent));
+      width: 0;
+    }
+    .list-mini { display: grid; gap: 8px; }
+    .mini-item {
+      padding: 10px 12px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      align-items: center;
+      font-size: 13px;
+    }
+    .status-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      display: inline-block;
+      background: var(--accent);
+      margin-right: 8px;
+    }
+    .tiny { font-size: 12px; color: var(--muted); }
+    .hide { display: none !important; }
+    .footer-note {
+      padding: 10px 16px;
+      font-size: 12px;
+      color: var(--muted);
+      border-top: 1px solid var(--border);
+    }
+    @media (max-width: 1180px) {
+      .app { grid-template-columns: 340px 1fr; }
+      .rightbar { display: none; }
+    }
+    @media (max-width: 820px) {
+      .app { grid-template-columns: 1fr; }
+      .sidebar { display: none; }
+    }
+  </style>
 </head>
 <body>
-
-<!-- LOGIN -->
-<div id="login-screen">
-  <div class="login-box">
-    <div class="login-logo"><img src="https://i.imgur.com/placeholder.png" onerror="this.style.display='none'" alt="WantCash"></div>
-    <p class="login-title">Painel de Atendimento</p>
-    <p class="login-sub">Acesso restrito a managers</p>
-    <div class="field"><label>Seu nome</label><input type="text" id="input-name" placeholder="Ex: Enzo Topcard" /></div>
-    <div class="field"><label>URL base do n8n</label><input type="text" id="input-url" placeholder="https://wantcashtopcard.app.n8n.cloud" /></div>
-    <div class="field"><label>Phone Number ID (Meta)</label><input type="text" id="input-phone-id" placeholder="123456789012345" /></div>
-    <p class="error-msg" id="login-error">Preencha todos os campos.</p>
-    <button class="btn-login" onclick="doLogin()">Entrar →</button>
-  </div>
-</div>
-
-<!-- APP -->
-<div id="app">
-  <div class="sidebar">
-    <div class="sidebar-top">
-      <div class="sidebar-top-left">
-        <div class="sidebar-avatar"><img src="https://i.imgur.com/placeholder.png" onerror="this.style.display='none'" alt="W"></div>
-        <span class="manager-name" id="manager-label">Manager</span>
+  <div class="app">
+    <aside class="sidebar">
+      <div class="topbar">
+        <div>
+          <div class="title">Painel Manager</div>
+          <div class="muted tiny">WhatsApp + n8n + CRM</div>
+        </div>
       </div>
-      <div class="sidebar-top-right">
-        <button class="icon-btn" onclick="loadConversations()" title="Atualizar conversas">↻</button>
-        <button class="icon-btn" onclick="openModal()" title="Nova conversa">✎</button>
-        <button class="icon-btn" onclick="logout()" title="Sair" style="color:#f87171">⏻</button>
+
+      <div class="filters">
+        <div class="login-box">
+          <input id="n8nUrl" class="field grow" placeholder="https://wantcashtopcard.app.n8n.cloud" />
+          <input id="managerName" class="field" placeholder="Nome do manager" style="width: 160px;" />
+          <button id="saveConfigBtn" class="btn btn-primary">Conectar</button>
+        </div>
+        <input id="searchInput" class="field" placeholder="Buscar por nome, número, bucket, etapa..." />
       </div>
-    </div>
-    <div class="sidebar-search">
-      <div class="search-wrap">
-        <span style="color:#8696a0;font-size:15px">🔍</span>
-        <input type="text" id="search-input" placeholder="Pesquisar..." oninput="renderSidebar(this.value)" />
+
+      <div class="tabs">
+        <div class="tab active" data-tab="ultimas">Últimas conversas</div>
+        <div class="tab" data-tab="manager">Aguardando manager</div>
+        <div class="tab" data-tab="bot">Interagiu com o bot</div>
+        <div class="tab" data-tab="humano">Interagiu com o humano</div>
+        <div class="tab" data-tab="link">Enviou o link</div>
       </div>
-    </div>
-    <div class="sidebar-filters">
-      <button class="filter-chip active" onclick="setFilter('todas',this)">Todas</button>
-      <button class="filter-chip" onclick="setFilter('novo',this)">Novo cliente</button>
-      <button class="filter-chip" onclick="setFilter('pagamento',this)">Pagamento</button>
-      <button class="filter-chip" onclick="setFilter('problema',this)">Problema</button>
-      <button class="filter-chip" onclick="setFilter('vip',this)">VIP</button>
-    </div>
-    <div class="sidebar-wrapper">
-      <div class="conv-list" id="conv-list">
-        <div class="empty-conv"><div class="empty-conv-icon">💬</div>Nenhuma conversa pendente.<br>O bot está atendendo normalmente.</div>
+
+      <div id="conversationList" class="conversation-list"></div>
+    </aside>
+
+    <main class="chat">
+      <div class="chat-header">
+        <div id="chatAvatar" class="avatar">?</div>
+        <div>
+          <div id="chatName" class="title" style="font-size:16px;">Selecione uma conversa</div>
+          <div id="chatSub" class="muted tiny">Nenhuma conversa carregada</div>
+        </div>
+        <div class="chat-header-actions">
+          <button id="refreshBtn" class="btn btn-ghost">Atualizar</button>
+          <button id="returnToBotBtn" class="btn btn-ghost hide">Retornar para o bot</button>
+        </div>
       </div>
-      <button class="fab" onclick="openModal()">+</button>
-    </div>
+
+      <div id="messages" class="messages">
+        <div class="empty">Conecte o painel ao n8n e selecione uma conversa.</div>
+      </div>
+
+      <div class="composer">
+        <textarea id="messageInput" class="field" placeholder="Digite a resposta do manager..."></textarea>
+        <button id="sendBtn" class="btn btn-primary">Enviar</button>
+      </div>
+    </main>
+
+    <aside class="rightbar">
+      <div class="topbar">
+        <div class="title" style="font-size:16px;">Insights</div>
+      </div>
+
+      <div class="panel-block">
+        <div class="section-title">Resumo geral</div>
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="tiny">Conversas</div>
+            <div id="statTotal" class="stat-value">0</div>
+          </div>
+          <div class="stat-card">
+            <div class="tiny">Aguardando manager</div>
+            <div id="statManager" class="stat-value">0</div>
+          </div>
+          <div class="stat-card">
+            <div class="tiny">Interagiu com o bot</div>
+            <div id="statBot" class="stat-value">0</div>
+          </div>
+          <div class="stat-card">
+            <div class="tiny">Enviou o link</div>
+            <div id="statLink" class="stat-value">0</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel-block">
+        <div class="section-title">Distribuição do CRM</div>
+        <div class="tiny">Bot</div>
+        <div class="progress"><span id="barBot"></span></div>
+        <div class="tiny" style="margin-top:10px;">Humano</div>
+        <div class="progress"><span id="barHumano"></span></div>
+        <div class="tiny" style="margin-top:10px;">Link enviado</div>
+        <div class="progress"><span id="barLink"></span></div>
+      </div>
+
+      <div class="panel-block">
+        <div class="section-title">Fila de atenção</div>
+        <div id="attentionList" class="list-mini"></div>
+      </div>
+
+      <div class="panel-block">
+        <div class="section-title">Conversa atual</div>
+        <div id="currentMeta" class="list-mini">
+          <div class="mini-item"><span>Status</span><span class="muted">-</span></div>
+        </div>
+      </div>
+
+      <div class="footer-note">Atualização automática a cada 5 segundos.</div>
+    </aside>
   </div>
 
-  <div class="chat-panel" id="chat-panel">
-    <div class="chat-empty-state">
-      <p style="font-size:40px">💬</p>
-      <p>Selecione uma conversa para começar</p>
-    </div>
-  </div>
+  <script>
+    const state = {
+      n8nUrl: localStorage.getItem('crm_n8n_url') || 'https://wantcashtopcard.app.n8n.cloud',
+      managerName: localStorage.getItem('crm_manager_name') || '',
+      activeTab: 'ultimas',
+      allConversations: [],
+      selectedNumber: null,
+      polling: null,
+      lastPayload: null,
+    };
 
-  <div class="crm-panel" id="crm-panel">
-    <div class="crm-header">
-      <h3>📋 Dados do Cliente</h3>
-      <button class="icon-btn" onclick="toggleCRM()">✕</button>
-    </div>
-    <div class="crm-body" id="crm-body"></div>
-  </div>
-</div>
+    const els = {
+      n8nUrl: document.getElementById('n8nUrl'),
+      managerName: document.getElementById('managerName'),
+      saveConfigBtn: document.getElementById('saveConfigBtn'),
+      searchInput: document.getElementById('searchInput'),
+      conversationList: document.getElementById('conversationList'),
+      tabs: [...document.querySelectorAll('.tab')],
+      messages: document.getElementById('messages'),
+      messageInput: document.getElementById('messageInput'),
+      sendBtn: document.getElementById('sendBtn'),
+      returnToBotBtn: document.getElementById('returnToBotBtn'),
+      refreshBtn: document.getElementById('refreshBtn'),
+      chatName: document.getElementById('chatName'),
+      chatSub: document.getElementById('chatSub'),
+      chatAvatar: document.getElementById('chatAvatar'),
+      statTotal: document.getElementById('statTotal'),
+      statManager: document.getElementById('statManager'),
+      statBot: document.getElementById('statBot'),
+      statLink: document.getElementById('statLink'),
+      barBot: document.getElementById('barBot'),
+      barHumano: document.getElementById('barHumano'),
+      barLink: document.getElementById('barLink'),
+      attentionList: document.getElementById('attentionList'),
+      currentMeta: document.getElementById('currentMeta'),
+    };
 
-<!-- MODAL -->
-<div class="modal-overlay" id="modal-new">
-  <div class="modal-box">
-    <h3>Nova conversa</h3>
-    <input type="text" id="new-number-input" placeholder="Ex: 5511999999999" />
-    <div class="modal-actions">
-      <button class="btn-cancel" onclick="closeModal()">Cancelar</button>
-      <button class="btn-confirm" onclick="openNewConv()">Abrir →</button>
-    </div>
-  </div>
-</div>
-
-<!-- TAG DROPDOWN -->
-<div class="tag-menu" id="tag-menu">
-  <div class="tag-menu-item" onclick="applyTag('novo')"><span class="tag-dot" style="background:#34d399"></span>Novo cliente</div>
-  <div class="tag-menu-item" onclick="applyTag('pagamento')"><span class="tag-dot" style="background:#fbbf24"></span>Aguardando pagamento</div>
-  <div class="tag-menu-item" onclick="applyTag('problema')"><span class="tag-dot" style="background:#f87171"></span>Problema técnico</div>
-  <div class="tag-menu-item" onclick="applyTag('vip')"><span class="tag-dot" style="background:#a78bfa"></span>VIP</div>
-</div>
-
-<div class="toast" id="toast"></div>
-
-<script>
-const TAGS = {
-  novo:      { label: 'Novo cliente',          color: '#34d399', bg: 'rgba(52,211,153,0.15)' },
-  pagamento: { label: 'Aguard. pagamento',     color: '#fbbf24', bg: 'rgba(251,191,36,0.15)' },
-  problema:  { label: 'Problema técnico',      color: '#f87171', bg: 'rgba(248,113,113,0.15)' },
-  vip:       { label: 'VIP',                   color: '#a78bfa', bg: 'rgba(167,139,250,0.15)' }
-};
-
-let N8N_URL='', PHONE_ID='', MANAGER_NAME='';
-let activeNumber=null, allConvs=[], msgs={}, crmData={}, convTags={}, convUnread={};
-let activeFilter='todas', crmOpen=false, refreshTimer=null, tagMenuFor=null;
-
-// ─── HELPER: extrai número de um objeto conversa (aceita "numero", "número", "from") ───
-function getNumero(c) {
-  if (!c) return '';
-  return (
-    c.numero ??
-    c['\u006e\u00famero'] ??   // "número" com acento (ú = \u00fa)
-    c['n\u00famero'] ??        // variação
-    c.from ??
-    ''
-  );
-}
-
-// ─── HELPER: extrai mensagens de resposta (aceita "mensagens" e "mensagens" com acento) ───
-function getMensagens(data) {
-  if (!data) return null;
-  return (
-    data.mensagens ??
-    data['mensagens'] ??       // mesmo campo, por garantia
-    data.messages ??
-    null
-  );
-}
-
-// ─── HELPER: normaliza item de conversa garantindo campo "numero" sem acento ───
-function normalizeConv(c) {
-  const num = getNumero(c);
-  return {
-    ...c,
-    numero: num,        // garante campo sem acento
-    ultimaMensagem: c.ultimaMensagem ?? c.lastMessage ?? c.ultima_mensagem ?? '',
-    timestamp: c.timestamp ?? null,
-    nome: c.nome ?? c.name ?? null,
-  };
-}
-
-// LOGIN
-function doLogin(){
-  const name = document.getElementById('input-name').value.trim();
-  let url = document.getElementById('input-url').value.trim().replace(/\/$/, '');
-  const pid = document.getElementById('input-phone-id').value.trim();
-  if (!name || !url || !pid) { document.getElementById('login-error').style.display = 'block'; return; }
-  if (!url.startsWith('http')) url = 'https://' + url;
-  MANAGER_NAME = name; N8N_URL = url; PHONE_ID = pid;
-  document.getElementById('login-error').style.display = 'none';
-  document.getElementById('login-screen').style.display = 'none';
-  document.getElementById('app').style.display = 'flex';
-  document.getElementById('manager-label').textContent = name;
-  loadConversations();
-  refreshTimer = setInterval(loadConversations, 10000);
-}
-function logout(){ clearInterval(refreshTimer); document.getElementById('app').style.display='none'; document.getElementById('login-screen').style.display='flex'; }
-
-// LOAD CONVERSATIONS
-async function loadConversations(){
-  try {
-    const res = await fetch(`${N8N_URL}/webhook/whatsapp-historico`);
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    const data = await res.json();
-
-    // Aceita array direto, objeto com .conversas, ou objeto único
-    let raw = [];
-    if (Array.isArray(data)) {
-      raw = data;
-    } else if (Array.isArray(data.conversas)) {
-      raw = data.conversas;
-    } else if (getNumero(data)) {
-      raw = [data];
+    function toast(msg) {
+      alert(msg);
     }
 
-    // Normaliza todos (resolve acento no campo numero)
-    allConvs = raw.map(normalizeConv).filter(c => c.numero);
-
-    renderSidebar();
-    if (activeNumber) loadHistory(activeNumber);
-  } catch(e) {
-    showToast('Erro ao carregar conversas', 'error');
-    console.error('loadConversations:', e);
-  }
-}
-
-// LOAD HISTORY
-async function loadHistory(number){
-  try {
-    const res = await fetch(`${N8N_URL}/webhook/whatsapp-historico?numero=${number}`);
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    const data = await res.json();
-    const mensagens = getMensagens(data);
-    if (mensagens && Array.isArray(mensagens)) {
-      msgs[number] = mensagens;
-      renderMessages(number);
-      convUnread[number] = 0;
+    function escapeHtml(v) {
+      return String(v ?? '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
     }
-  } catch(e) {
-    console.error('loadHistory:', e);
-  }
-}
 
-// FILTER
-function setFilter(f, el){
-  activeFilter = f;
-  document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
-  el.classList.add('active');
-  renderSidebar();
-}
+    function formatDate(v) {
+      if (!v) return '';
+      const d = new Date(v);
+      if (Number.isNaN(d.getTime())) return String(v);
+      return d.toLocaleString('pt-BR', {
+        day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit'
+      });
+    }
 
-// SIDEBAR
-function renderSidebar(search=''){
-  const list = document.getElementById('conv-list');
-  let convs = allConvs;
+    function avatarLabel(name) {
+      return (name || '?').trim().slice(0, 2).toUpperCase();
+    }
 
-  if (search) {
-    const q = search.toLowerCase();
-    convs = convs.filter(c => {
-      const n = c.numero || '';
-      const nome = crmData[n]?.nome || c.nome || '';
-      return n.includes(q) || nome.toLowerCase().includes(q);
-    });
-  }
+    function normalizeUrl(v) {
+      return String(v || '').trim().replace(/\/$/, '');
+    }
 
-  if (activeFilter !== 'todas') {
-    convs = convs.filter(c => (convTags[c.numero] || []).includes(activeFilter));
-  }
+    async function safeFetch(url, options = {}) {
+      const res = await fetch(url, options);
+      const text = await res.text();
+      let data = {};
+      try { data = text ? JSON.parse(text) : {}; } catch { data = { raw: text }; }
+      if (!res.ok) throw new Error(data.message || data.error || data.raw || `HTTP ${res.status}`);
+      return data;
+    }
 
-  if (!convs.length) {
-    list.innerHTML = `<div class="empty-conv"><div class="empty-conv-icon">💬</div>Nenhuma conversa pendente.<br>O bot está atendendo normalmente.</div>`;
-    return;
-  }
+    function getMessagesArray(conv) {
+      const msgs = conv.mensagens || conv.messages || conv.ultimas_mensagens || conv.last_messages || [];
+      return Array.isArray(msgs) ? msgs.slice(-10) : [];
+    }
 
-  list.innerHTML = convs.map(c => {
-    const num = c.numero;
-    const name = crmData[num]?.nome || c.nome || formatNum(num);
-    const preview = c.ultimaMensagem || '...';
-    const time = c.timestamp ? new Date(c.timestamp).toLocaleTimeString('pt-BR', {hour:'2-digit', minute:'2-digit'}) : '';
-    const tags = (convTags[num] || []).slice(0, 2).map(t => {
-      const tc = TAGS[t];
-      return tc ? `<span class="tag-pill" style="background:${tc.bg};color:${tc.color}">${tc.label}</span>` : '';
-    }).join('');
-    const unread = convUnread[num] || 0;
-    return `<div class="conv-item ${num === activeNumber ? 'active' : ''}" onclick="selectConv('${num}')">
-      <div class="conv-av">👤</div>
-      <div class="conv-body">
-        <div class="conv-row1"><span class="conv-name">${esc(name)}</span><span class="conv-time">${time}</span></div>
-        <div class="conv-row2"><span class="conv-preview">${esc(preview.substring(0, 45))}</span>${unread ? `<span class="unread-badge">${unread}</span>` : ''}</div>
-        ${tags ? `<div style="margin-top:4px;display:flex;gap:4px">${tags}</div>` : ''}
-      </div>
-    </div>`;
-  }).join('');
-}
+    function normalizeMessage(msg = {}) {
+      const origem = msg.origem || msg.from_role || msg.role || msg.tipo || msg.source || 'cliente';
+      const texto = msg.texto || msg.body || msg.content || msg.mensagem || '[sem texto]';
+      const timestamp = msg.timestamp || msg.at || msg.created_at || msg.data || msg.time || null;
+      const manager = msg.manager || msg.gerente || '';
+      const isMe = ['manager', 'humano', 'bot', 'assistant', 'system'].includes(String(origem).toLowerCase());
+      return { origem, texto, timestamp, manager, isMe };
+    }
 
-// SELECT
-async function selectConv(number){
-  activeNumber = number;
-  convUnread[number] = 0;
-  renderChat(number);
-  renderCRM(number);
-  await loadHistory(number);
-  renderSidebar();
-}
-function openModal(){ document.getElementById('modal-new').classList.add('open'); setTimeout(()=>document.getElementById('new-number-input').focus(), 100); }
-function closeModal(){ document.getElementById('modal-new').classList.remove('open'); }
-function openNewConv(){
-  const n = document.getElementById('new-number-input').value.trim().replace(/\D/g, '');
-  if (!n) return;
-  closeModal();
-  document.getElementById('new-number-input').value = '';
-  activeNumber = n;
-  msgs[n] = msgs[n] || [];
-  if (!allConvs.find(c => c.numero === n)) {
-    allConvs.push(normalizeConv({ numero: n, ultimaMensagem: '', timestamp: Date.now() }));
-  }
-  renderChat(n); renderCRM(n); renderSidebar();
-}
+    function normalizeConversation(conv = {}) {
+      const numero = String(conv.numero || conv.phone || conv.telefone || conv.wa_id || '').replace(/\D/g, '');
+      const nome = conv.nome || conv.name || numero || 'Sem nome';
+      const bucket = conv.crm_bucket || conv.bucket || conv.categoria || inferBucket(conv);
+      const etapa = conv.etapa_fechamento || conv.stage || conv.etapa || '';
+      const aguardando = Boolean(conv.aguardando_manager || conv.waiting_manager || conv.modo === 'humano' || etapa === 'aguardando_manager');
+      const humanInteracted = Boolean(conv.human_interacted || bucket === 'INTERAGIU_COM_HUMANO');
+      const linkSent = Boolean(conv.link_sent || bucket === 'ENVIOU_O_LINK');
+      const unread = Number(conv.unread_manager || conv.unread || 0);
+      const lastUpdated = conv.last_updated_at || conv.updated_at || conv.last_seen_at || conv.data || null;
+      const lastText = conv.ultima_texto || conv.last_text || conv.preview || getMessagesArray(conv).slice(-1)[0]?.texto || '';
+      const mode = conv.modo || (aguardando ? 'humano' : 'bot');
+      const managerResponsavel = conv.manager_responsavel || conv.manager || conv.gerente || '';
+      const phoneNumberId = conv.phone_number_id || conv.phoneNumberId || '';
+      return {
+        ...conv,
+        numero, nome, bucket, etapa, aguardando, humanInteracted, linkSent,
+        unread, lastUpdated, lastText, mode, managerResponsavel, phoneNumberId,
+        mensagensNorm: getMessagesArray(conv).map(normalizeMessage),
+      };
+    }
 
-// CHAT
-function renderChat(number){
-  const name = crmData[number]?.nome || formatNum(number);
-  const tags = convTags[number] || [];
-  const tagsHtml = tags.map(t => {
-    const tc = TAGS[t];
-    return tc ? `<span class="tag-badge" style="background:${tc.bg};color:${tc.color}" onclick="removeTag('${number}','${t}')">${tc.label}<span class="tag-x"> ✕</span></span>` : '';
-  }).join('');
+    function inferBucket(conv = {}) {
+      if (conv.link_sent) return 'ENVIOU_O_LINK';
+      if (conv.human_interacted || conv.aguardando_manager || conv.modo === 'humano') return 'INTERAGIU_COM_HUMANO';
+      return 'INTERAGIU_COM_BOT';
+    }
 
-  document.getElementById('chat-panel').innerHTML = `
-    <div class="chat-header">
-      <div class="chat-header-av">👤</div>
-      <div class="chat-header-info" onclick="toggleCRM()">
-        <div class="chat-header-name">${esc(name)}</div>
-        <div class="chat-header-status">🟡 Aguardando atendimento humano</div>
-      </div>
-      <div class="chat-header-actions">
-        <button class="icon-btn" onclick="loadHistory('${number}')" title="Atualizar mensagens">↻</button>
-        <button class="icon-btn" onclick="toggleCRM()" title="Ver dados do cliente" style="${crmOpen ? 'color:#00a884' : ''}">📋</button>
-      </div>
-    </div>
-    <div class="tags-row" id="tags-row-${number}">
-      ${tagsHtml}
-      <button class="btn-add-tag" onclick="showTagMenu(event,'${number}')">+ Etiqueta</button>
-    </div>
-    <div class="messages-wrap" id="messages-${number}"></div>
-    <div class="chat-input-wrap">
-      <textarea id="msg-input-${number}" placeholder="Digite uma mensagem" rows="1"
-        onkeydown="handleKey(event,'${number}')" oninput="autoResize(this)"></textarea>
-      <button class="btn-send" id="btn-send-${number}" onclick="sendMsg('${number}')">➤</button>
-    </div>`;
+    function normalizePayload(data) {
+      const arrays = [];
+      if (Array.isArray(data)) arrays.push(...data);
+      if (Array.isArray(data.conversas)) arrays.push(...data.conversas);
+      if (Array.isArray(data.ultimas_conversas)) arrays.push(...data.ultimas_conversas);
+      if (Array.isArray(data.aguardando_manager)) arrays.push(...data.aguardando_manager);
+      if (Array.isArray(data.crm?.INTERAGIU_COM_BOT)) arrays.push(...data.crm.INTERAGIU_COM_BOT);
+      if (Array.isArray(data.crm?.INTERAGIU_COM_HUMANO)) arrays.push(...data.crm.INTERAGIU_COM_HUMANO);
+      if (Array.isArray(data.crm?.ENVIOU_O_LINK)) arrays.push(...data.crm.ENVIOU_O_LINK);
 
-  renderMessages(number);
-  setTimeout(() => document.getElementById(`msg-input-${number}`)?.focus(), 100);
-}
+      const byNumber = new Map();
+      arrays.map(normalizeConversation).forEach(conv => {
+        if (!conv.numero) return;
+        const prev = byNumber.get(conv.numero);
+        if (!prev) return void byNumber.set(conv.numero, conv);
+        const pick = (new Date(conv.lastUpdated || 0).getTime() >= new Date(prev.lastUpdated || 0).getTime()) ? conv : prev;
+        const mergedMsgs = [...(prev.mensagensNorm || []), ...(conv.mensagensNorm || [])]
+          .slice(-10);
+        byNumber.set(conv.numero, { ...prev, ...conv, ...pick, mensagensNorm: mergedMsgs });
+      });
 
-function renderMessages(number){
-  const c = document.getElementById(`messages-${number}`);
-  if (!c) return;
-  const list = msgs[number] || [];
-  if (!list.length) {
-    c.innerHTML = `<div style="text-align:center;color:#8696a0;font-size:13px;padding:24px">Sem mensagens ainda.</div>`;
-    return;
-  }
-  let lastDay = '';
-  c.innerHTML = list.map(m => {
-    // Detecta se é mensagem do manager
-    const isMgr = m.tipo === 'manager' || m.role === 'manager' || m.from === 'manager' || m.de === 'manager';
-    const ts = m.timestamp ? new Date(m.timestamp) : null;
-    const time = ts ? ts.toLocaleTimeString('pt-BR', {hour:'2-digit', minute:'2-digit'}) : '';
-    const day = ts ? ts.toLocaleDateString('pt-BR') : '';
-    let dayHtml = '';
-    if (day && day !== lastDay) { lastDay = day; dayHtml = `<div class="msg-day"><span>${day}</span></div>`; }
-    // Extrai texto da mensagem (várias chaves possíveis)
-    const texto = m.mensagem ?? m.message ?? m.body ?? m.texto ?? '';
-    return `${dayHtml}<div class="msg ${isMgr ? 'manager' : 'client'}"><div class="msg-bubble">${isMgr ? `<div class="msg-sender">${esc(m.manager || MANAGER_NAME)}</div>` : ''}${esc(texto)}<div class="msg-meta"><span class="msg-time">${time}</span>${isMgr ? '<span class="msg-check">✓✓</span>' : ''}</div></div></div>`;
-  }).join('');
-  c.scrollTop = c.scrollHeight;
-}
+      return [...byNumber.values()].sort((a, b) => new Date(b.lastUpdated || 0) - new Date(a.lastUpdated || 0)).slice(0, 50);
+    }
 
-// TAGS
-function showTagMenu(e, number){
-  e.stopPropagation();
-  tagMenuFor = number;
-  const menu = document.getElementById('tag-menu');
-  const r = e.currentTarget.getBoundingClientRect();
-  menu.style.top = (r.bottom + 4) + 'px';
-  menu.style.left = r.left + 'px';
-  menu.classList.toggle('open');
-}
-document.addEventListener('click', () => document.getElementById('tag-menu').classList.remove('open'));
+    function filteredConversations() {
+      const q = els.searchInput.value.trim().toLowerCase();
+      let list = [...state.allConversations];
+      if (state.activeTab === 'manager') list = list.filter(c => c.aguardando);
+      if (state.activeTab === 'bot') list = list.filter(c => c.bucket === 'INTERAGIU_COM_BOT');
+      if (state.activeTab === 'humano') list = list.filter(c => c.bucket === 'INTERAGIU_COM_HUMANO' || c.humanInteracted);
+      if (state.activeTab === 'link') list = list.filter(c => c.bucket === 'ENVIOU_O_LINK' || c.linkSent);
+      if (q) {
+        list = list.filter(c => [c.nome, c.numero, c.bucket, c.etapa, c.lastText, c.managerResponsavel].join(' ').toLowerCase().includes(q));
+      }
+      return list;
+    }
 
-function applyTag(tag){
-  if (!tagMenuFor) return;
-  const n = tagMenuFor;
-  if (!convTags[n]) convTags[n] = [];
-  if (!convTags[n].includes(tag)) convTags[n].push(tag);
-  tagMenuFor = null;
-  if (activeNumber === n) { renderChat(n); renderMessages(n); }
-  renderSidebar(); renderCRM(n);
-}
-function removeTag(number, tag){
-  convTags[number] = (convTags[number] || []).filter(t => t !== tag);
-  if (activeNumber === number) { renderChat(number); renderMessages(number); }
-  renderSidebar(); renderCRM(number);
-}
+    function renderList() {
+      const list = filteredConversations();
+      if (!list.length) {
+        els.conversationList.innerHTML = '<div class="empty" style="height: 180px;">Nenhuma conversa encontrada.</div>';
+        return;
+      }
+      els.conversationList.innerHTML = list.map(conv => `
+        <div class="conversation-item ${state.selectedNumber === conv.numero ? 'active' : ''}" data-number="${conv.numero}">
+          <div class="avatar">${escapeHtml(avatarLabel(conv.nome))}</div>
+          <div>
+            <div class="conv-top">
+              <div class="conv-name">${escapeHtml(conv.nome)}</div>
+              <div class="conv-time">${escapeHtml(formatDate(conv.lastUpdated))}</div>
+            </div>
+            <div class="conv-last">${escapeHtml(conv.lastText || 'Sem mensagens')}</div>
+            <div class="chips">
+              <span class="chip">${escapeHtml(conv.bucket)}</span>
+              ${conv.etapa ? `<span class="chip">${escapeHtml(conv.etapa)}</span>` : ''}
+              ${conv.mode ? `<span class="chip">modo: ${escapeHtml(conv.mode)}</span>` : ''}
+            </div>
+          </div>
+          ${conv.unread ? `<div class="badge">${conv.unread}</div>` : '<div></div>'}
+        </div>
+      `).join('');
 
-// CRM
-function toggleCRM(){
-  crmOpen = !crmOpen;
-  const p = document.getElementById('crm-panel');
-  crmOpen ? p.classList.add('open') : p.classList.remove('open');
-  if (crmOpen && activeNumber) renderCRM(activeNumber);
-}
-function renderCRM(number){
-  const body = document.getElementById('crm-body');
-  if (!number || !crmOpen) { body.innerHTML = ''; return; }
-  const d = crmData[number] || {};
-  const tags = convTags[number] || [];
-  const tagsHtml = Object.entries(TAGS).map(([k, v]) => {
-    const on = tags.includes(k);
-    return `<div class="crm-tag-row" onclick="toggleTagCRM('${number}','${k}')">
-      <div class="crm-tag-row-left"><span class="tag-dot" style="background:${v.color}"></span>${v.label}</div>
-      <div class="crm-tag-check ${on ? 'on' : ''}">✓</div>
-    </div>`;
-  }).join('');
-  const hist = (d.historico || []).map(h => `<div class="history-item"><span class="hi-date">${h.date}</span>${esc(h.note)}</div>`).join('') || '<div style="color:#8696a0;font-size:12px;padding:4px 0">Nenhum registro ainda.</div>';
-  body.innerHTML = `
-    <div class="crm-section">
-      <h4>Identificação</h4>
-      <div class="crm-field"><label>Nome</label><input type="text" id="crm-nome" value="${escA(d.nome || '')}" placeholder="Nome do cliente" /></div>
-      <div class="crm-field"><label>Telefone</label><input type="text" value="${escA(formatNum(number))}" readonly style="opacity:0.5;cursor:default" /></div>
-      <button class="btn-save-crm" onclick="saveCRM('${number}')">💾 Salvar</button>
-    </div>
-    <div class="crm-section">
-      <h4>Etiquetas</h4>
-      <div class="crm-tags-grid">${tagsHtml}</div>
-    </div>
-    <div class="crm-section">
-      <h4>Anotações internas</h4>
-      <div class="crm-field"><textarea id="crm-notas" placeholder="Observações sobre este cliente...">${esc(d.notas || '')}</textarea></div>
-      <button class="btn-save-crm" onclick="saveCRM('${number}')">💾 Salvar anotação</button>
-    </div>
-    <div class="crm-section">
-      <h4>Histórico de anotações</h4>
-      ${hist}
-    </div>
-    <div class="crm-section">
-      <button class="btn-return-bot" onclick="returnToBot('${number}')">↩ Devolver ao Bot</button>
-    </div>`;
-}
-function saveCRM(number){
-  if (!crmData[number]) crmData[number] = {};
-  const d = crmData[number];
-  d.nome = document.getElementById('crm-nome')?.value || '';
-  const notas = document.getElementById('crm-notas')?.value || '';
-  if (notas && notas !== d.notas) {
-    d.notas = notas;
-    if (!d.historico) d.historico = [];
-    d.historico.unshift({ date: new Date().toLocaleDateString('pt-BR'), note: notas.substring(0, 100) });
-    if (d.historico.length > 15) d.historico.pop();
-  }
-  renderSidebar(); renderCRM(number); showToast('Salvo ✓', 'success');
-}
-function toggleTagCRM(number, tag){
-  if (!convTags[number]) convTags[number] = [];
-  const i = convTags[number].indexOf(tag);
-  i >= 0 ? convTags[number].splice(i, 1) : convTags[number].push(tag);
-  renderCRM(number);
-  if (activeNumber === number) { renderChat(number); renderMessages(number); }
-  renderSidebar();
-}
+      [...document.querySelectorAll('.conversation-item')].forEach(item => {
+        item.onclick = () => {
+          state.selectedNumber = item.dataset.number;
+          renderList();
+          renderChat();
+        };
+      });
 
-// SEND
-async function sendMsg(number){
-  const input = document.getElementById(`msg-input-${number}`);
-  const btn = document.getElementById(`btn-send-${number}`);
-  const text = input.value.trim();
-  if (!text) return;
-  input.value = ''; input.style.height = 'auto'; btn.disabled = true; btn.textContent = '⏳';
-  try {
-    const res = await fetch(`${N8N_URL}/webhook/whatsapp-responder`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ para: number, mensagem: text, manager: MANAGER_NAME, phoneNumberId: PHONE_ID })
-    });
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    if (!msgs[number]) msgs[number] = [];
-    msgs[number].push({ tipo: 'manager', mensagem: text, manager: MANAGER_NAME, timestamp: Date.now() });
-    renderMessages(number);
-    const conv = allConvs.find(c => c.numero === number);
-    if (conv) conv.ultimaMensagem = text;
-    renderSidebar();
-    showToast('Enviado ✓', 'success');
-  } catch(e) {
-    showToast('Erro: ' + e.message, 'error');
-    input.value = text;
-  } finally {
-    btn.disabled = false; btn.textContent = '➤';
-  }
-}
+      if (!state.selectedNumber && list[0]) {
+        state.selectedNumber = list[0].numero;
+        renderList();
+        renderChat();
+      }
+    }
 
-// RETURN TO BOT
-async function returnToBot(number){
-  if (!confirm(`Devolver ${formatNum(number)} ao bot?`)) return;
-  try {
-    await fetch(`${N8N_URL}/webhook/whatsapp-handoff`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ numero: number, modo: 'bot', manager: MANAGER_NAME })
-    });
-    allConvs = allConvs.filter(c => c.numero !== number);
-    activeNumber = null; crmOpen = false;
-    document.getElementById('chat-panel').innerHTML = `<div class="chat-empty-state"><p style="font-size:40px">💬</p><p>Selecione uma conversa para começar</p></div>`;
-    document.getElementById('crm-panel').classList.remove('open');
-    renderSidebar(); showToast('Devolvido ao bot ✓', 'success');
-  } catch(e) {
-    showToast('Erro: ' + e.message, 'error');
-  }
-}
+    function renderChat() {
+      const conv = state.allConversations.find(c => c.numero === state.selectedNumber);
+      if (!conv) {
+        els.chatName.textContent = 'Selecione uma conversa';
+        els.chatSub.textContent = 'Nenhuma conversa carregada';
+        els.chatAvatar.textContent = '?';
+        els.messages.innerHTML = '<div class="empty">Selecione uma conversa para visualizar.</div>';
+        els.returnToBotBtn.classList.add('hide');
+        renderCurrentMeta(null);
+        return;
+      }
+      els.chatName.textContent = conv.nome;
+      els.chatSub.textContent = `${conv.numero} • ${conv.bucket}${conv.managerResponsavel ? ` • manager: ${conv.managerResponsavel}` : ''}`;
+      els.chatAvatar.textContent = avatarLabel(conv.nome);
+      els.returnToBotBtn.classList.remove('hide');
+      const msgs = conv.mensagensNorm || [];
+      if (!msgs.length) {
+        els.messages.innerHTML = '<div class="empty">Esta conversa ainda não possui mensagens no histórico.</div>';
+      } else {
+        els.messages.innerHTML = msgs.map(msg => `
+          <div class="message-row ${msg.isMe ? 'me' : ''}">
+            <div class="bubble">
+              <div>${escapeHtml(msg.texto)}</div>
+              <div class="meta">
+                ${msg.manager ? `<span>${escapeHtml(msg.manager)}</span>` : ''}
+                <span>${escapeHtml(msg.origem)}</span>
+                <span>${escapeHtml(formatDate(msg.timestamp))}</span>
+              </div>
+            </div>
+          </div>
+        `).join('');
+      }
+      els.messages.scrollTop = els.messages.scrollHeight;
+      renderCurrentMeta(conv);
+    }
 
-// UTILS
-function handleKey(e, n){ if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMsg(n); } }
-function autoResize(el){ el.style.height = 'auto'; el.style.height = Math.min(el.scrollHeight, 120) + 'px'; }
-function formatNum(n){
-  if (!n) return '';
-  n = String(n);
-  if (n.length === 13) return `+${n.slice(0,2)} (${n.slice(2,4)}) ${n.slice(4,9)}-${n.slice(9)}`;
-  return `+${n}`;
-}
-function esc(t){ return String(t || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>'); }
-function escA(t){ return String(t || '').replace(/"/g,'&quot;'); }
-function showToast(msg, type=''){
-  const t = document.getElementById('toast');
-  t.textContent = msg; t.className = `toast ${type} show`;
-  setTimeout(() => t.className = 'toast', 3000);
-}
-</script>
+    function renderCurrentMeta(conv) {
+      if (!conv) {
+        els.currentMeta.innerHTML = '<div class="mini-item"><span>Status</span><span class="muted">-</span></div>';
+        return;
+      }
+      els.currentMeta.innerHTML = `
+        <div class="mini-item"><span>Número</span><span class="muted">${escapeHtml(conv.numero)}</span></div>
+        <div class="mini-item"><span>Bucket</span><span class="muted">${escapeHtml(conv.bucket)}</span></div>
+        <div class="mini-item"><span>Etapa</span><span class="muted">${escapeHtml(conv.etapa || '-')}</span></div>
+        <div class="mini-item"><span>Modo</span><span class="muted">${escapeHtml(conv.mode)}</span></div>
+        <div class="mini-item"><span>Manager</span><span class="muted">${escapeHtml(conv.managerResponsavel || '-')}</span></div>
+        <div class="mini-item"><span>Atualizado</span><span class="muted">${escapeHtml(formatDate(conv.lastUpdated))}</span></div>
+      `;
+    }
+
+    function renderInsights() {
+      const total = state.allConversations.length;
+      const manager = state.allConversations.filter(c => c.aguardando).length;
+      const bot = state.allConversations.filter(c => c.bucket === 'INTERAGIU_COM_BOT').length;
+      const humano = state.allConversations.filter(c => c.bucket === 'INTERAGIU_COM_HUMANO' || c.humanInteracted).length;
+      const link = state.allConversations.filter(c => c.bucket === 'ENVIOU_O_LINK' || c.linkSent).length;
+
+      els.statTotal.textContent = total;
+      els.statManager.textContent = manager;
+      els.statBot.textContent = bot;
+      els.statLink.textContent = link;
+
+      const pct = n => total ? Math.round((n / total) * 100) : 0;
+      els.barBot.style.width = pct(bot) + '%';
+      els.barHumano.style.width = pct(humano) + '%';
+      els.barLink.style.width = pct(link) + '%';
+
+      const topAttention = [...state.allConversations]
+        .filter(c => c.aguardando)
+        .sort((a,b) => new Date(b.lastUpdated || 0) - new Date(a.lastUpdated || 0))
+        .slice(0, 6);
+
+      els.attentionList.innerHTML = topAttention.length ? topAttention.map(c => `
+        <div class="mini-item">
+          <div>
+            <div><span class="status-dot"></span>${escapeHtml(c.nome)}</div>
+            <div class="tiny">${escapeHtml(c.numero)}</div>
+          </div>
+          <div class="tiny">${escapeHtml(formatDate(c.lastUpdated))}</div>
+        </div>
+      `).join('') : '<div class="tiny">Nenhuma conversa aguardando manager.</div>';
+    }
+
+    async function loadConversations() {
+      const base = normalizeUrl(state.n8nUrl);
+      if (!base) return;
+      const data = await safeFetch(`${base}/webhook/whatsapp-historico`);
+      state.lastPayload = data;
+      state.allConversations = normalizePayload(data);
+      renderList();
+      renderChat();
+      renderInsights();
+    }
+
+    async function sendManagerMessage() {
+      const conv = state.allConversations.find(c => c.numero === state.selectedNumber);
+      if (!conv) return toast('Selecione uma conversa.');
+      const mensagem = els.messageInput.value.trim();
+      if (!mensagem) return toast('Digite uma mensagem.');
+      if (!state.managerName.trim()) return toast('Informe o nome do manager.');
+      const base = normalizeUrl(state.n8nUrl);
+      try {
+        await safeFetch(`${base}/webhook/whatsapp-responder`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            para: conv.numero,
+            mensagem,
+            manager: state.managerName,
+            phoneNumberId: conv.phoneNumberId || ''
+          })
+        });
+        els.messageInput.value = '';
+        await loadConversations();
+      } catch (e) {
+        toast(`Erro ao enviar: ${e.message}`);
+      }
+    }
+
+    async function returnToBot() {
+      const conv = state.allConversations.find(c => c.numero === state.selectedNumber);
+      if (!conv) return toast('Selecione uma conversa.');
+      const base = normalizeUrl(state.n8nUrl);
+      try {
+        await safeFetch(`${base}/webhook/whatsapp-handoff`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            numero: conv.numero,
+            modo: 'bot',
+            manager: state.managerName || 'Manager'
+          })
+        });
+        await loadConversations();
+      } catch (e) {
+        toast(`Erro ao retornar ao bot: ${e.message}`);
+      }
+    }
+
+    function saveConfig() {
+      state.n8nUrl = normalizeUrl(els.n8nUrl.value);
+      state.managerName = els.managerName.value.trim();
+      localStorage.setItem('crm_n8n_url', state.n8nUrl);
+      localStorage.setItem('crm_manager_name', state.managerName);
+      loadConversations().catch(err => toast(`Erro ao conectar: ${err.message}`));
+      startPolling();
+    }
+
+    function startPolling() {
+      if (state.polling) clearInterval(state.polling);
+      state.polling = setInterval(() => {
+        if (!state.n8nUrl) return;
+        loadConversations().catch(() => {});
+      }, 5000);
+    }
+
+    function bindEvents() {
+      els.saveConfigBtn.onclick = saveConfig;
+      els.sendBtn.onclick = sendManagerMessage;
+      els.returnToBotBtn.onclick = returnToBot;
+      els.refreshBtn.onclick = () => loadConversations().catch(err => toast(`Erro ao atualizar: ${err.message}`));
+      els.searchInput.oninput = renderList;
+      els.messageInput.addEventListener('keydown', e => {
+        if (e.key === 'Enter' && !e.shiftKey) {
+          e.preventDefault();
+          sendManagerMessage();
+        }
+      });
+      els.tabs.forEach(tab => {
+        tab.onclick = () => {
+          els.tabs.forEach(t => t.classList.remove('active'));
+          tab.classList.add('active');
+          state.activeTab = tab.dataset.tab;
+          renderList();
+        };
+      });
+    }
+
+    function init() {
+      els.n8nUrl.value = state.n8nUrl;
+      els.managerName.value = state.managerName;
+      bindEvents();
+      if (state.n8nUrl) {
+        loadConversations().catch(() => {});
+        startPolling();
+      }
+    }
+
+    init();
+  </script>
 </body>
 </html>
