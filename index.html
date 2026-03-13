@@ -3,480 +3,810 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Painel WhatsApp Manager</title>
+  <title>Painel Manager WantCash</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
-    :root {
-      --bg: #0b141a;
-      --panel: #111b21;
-      --panel-2: #202c33;
-      --panel-3: #2a3942;
-      --text: #e9edef;
-      --muted: #8696a0;
-      --accent: #25d366;
-      --accent-2: #00a884;
-      --danger: #f15c6d;
-      --warning: #f5c451;
-      --chip: #182229;
-      --card: #202c33;
-      --bubble-me: #005c4b;
-      --bubble-other: #202c33;
-      --border: rgba(255,255,255,.06);
-      --shadow: 0 10px 30px rgba(0,0,0,.22);
+    :root{
+      --bg:#0b141a;
+      --panel:#111b21;
+      --panel-2:#202c33;
+      --panel-3:#182229;
+      --line:#23343d;
+      --muted:#8fa3ad;
+      --text:#e9edef;
+      --accent:#25d366;
+      --accent-2:#00a884;
+      --danger:#ef4444;
+      --chip:#132028;
+      --out:#005c4b;
+      --in:#202c33;
+      --shadow:0 10px 30px rgba(0,0,0,.25);
+      --radius:18px;
     }
-    * { box-sizing: border-box; }
-    body {
-      margin: 0;
-      font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      height: 100vh;
-      overflow: hidden;
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family:Inter,system-ui,sans-serif;
+      background:linear-gradient(180deg,#0a1318,#0d171d);
+      color:var(--text);
+      overflow:hidden;
     }
-    .app {
-      display: grid;
-      grid-template-columns: 380px 1fr 320px;
-      height: 100vh;
+    button,input,textarea{font:inherit}
+    .hidden{display:none !important}
+
+    .login{
+      height:100%;
+      display:grid;
+      place-items:center;
+      padding:24px;
+      background:radial-gradient(circle at top left,#0f2c24 0%,transparent 28%), linear-gradient(180deg,#0b141a,#101920);
     }
-    .sidebar, .chat, .rightbar {
-      background: var(--panel);
-      border-right: 1px solid var(--border);
-      min-width: 0;
+    .login-card{
+      width:min(520px,100%);
+      background:rgba(17,27,33,.94);
+      border:1px solid rgba(255,255,255,.06);
+      border-radius:28px;
+      box-shadow:var(--shadow);
+      padding:28px;
+      display:flex;
+      flex-direction:column;
+      gap:18px;
     }
-    .rightbar { border-right: none; border-left: 1px solid var(--border); }
-    .topbar {
-      padding: 14px 16px;
-      display: flex;
-      gap: 10px;
-      align-items: center;
-      border-bottom: 1px solid var(--border);
-      background: rgba(17,27,33,.96);
+    .brand{
+      display:flex;
+      align-items:center;
+      gap:14px;
     }
-    .title { font-size: 18px; font-weight: 700; }
-    .muted { color: var(--muted); }
-    .grow { flex: 1; }
-    input, select, textarea, button {
-      font: inherit;
+    .brand-badge{
+      width:56px;height:56px;border-radius:18px;
+      background:linear-gradient(135deg,var(--accent),var(--accent-2));
+      display:grid;place-items:center;font-size:24px;font-weight:700;color:white;
+      box-shadow:0 8px 20px rgba(37,211,102,.25);
     }
-    .login-box {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-      width: 100%;
+    .brand h1{font-size:28px;margin:0}
+    .brand p{margin:4px 0 0;color:var(--muted)}
+    .fields{display:grid;gap:12px}
+    .field{display:grid;gap:8px}
+    .field label{font-size:13px;color:#b7c7ce;font-weight:600}
+    .field input{
+      width:100%;padding:14px 16px;border-radius:14px;border:1px solid #2a3b45;
+      background:#0f1b22;color:var(--text);outline:none;
     }
-    .field {
-      background: #0f171c;
-      color: var(--text);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 10px 12px;
-      outline: none;
-      min-width: 0;
+    .field input:focus{border-color:var(--accent-2)}
+    .login-actions{display:flex;gap:12px;flex-wrap:wrap}
+    .btn{
+      border:none;border-radius:14px;padding:14px 18px;cursor:pointer;font-weight:700;
+      transition:.18s transform,.18s opacity,.18s background;
     }
-    .field:focus { border-color: rgba(37,211,102,.5); }
-    .btn {
-      border: none;
-      border-radius: 10px;
-      padding: 10px 14px;
-      cursor: pointer;
-      background: var(--panel-3);
-      color: var(--text);
-      transition: .18s ease;
+    .btn:hover{transform:translateY(-1px)}
+    .btn-primary{background:linear-gradient(135deg,var(--accent),var(--accent-2));color:white}
+    .btn-secondary{background:#1a2a33;color:#d7e1e5;border:1px solid #2a3b45}
+    .tip{font-size:13px;color:var(--muted);line-height:1.5}
+    .error{color:#fca5a5;font-size:13px;display:none}
+
+    .app{display:flex;height:100%}
+    .sidebar{
+      width:380px;min-width:380px;background:var(--panel);border-right:1px solid var(--line);
+      display:flex;flex-direction:column;
     }
-    .btn:hover { filter: brightness(1.07); }
-    .btn-primary { background: var(--accent-2); color: #fff; }
-    .btn-danger { background: #5a1f28; color: #ffd9de; }
-    .btn-ghost { background: transparent; border: 1px solid var(--border); }
-    .tabs {
-      display: flex;
-      gap: 8px;
-      padding: 12px 12px 8px;
-      border-bottom: 1px solid var(--border);
-      flex-wrap: wrap;
+    .sidebar-header{
+      padding:18px 18px 14px;border-bottom:1px solid var(--line);
+      display:grid;gap:14px;background:rgba(17,27,33,.95)
     }
-    .tab {
-      padding: 9px 12px;
-      border-radius: 999px;
-      background: var(--chip);
-      color: var(--muted);
-      cursor: pointer;
-      font-size: 13px;
-      border: 1px solid transparent;
+    .sidebar-title{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+    .sidebar-title h2{margin:0;font-size:20px}
+    .sidebar-title p{margin:5px 0 0;color:var(--muted);font-size:13px}
+    .header-actions{display:flex;gap:8px}
+    .icon-btn{
+      width:42px;height:42px;border-radius:12px;border:1px solid #2b3c46;background:#142028;color:#d3dde2;cursor:pointer;
     }
-    .tab.active {
-      color: #fff;
-      background: rgba(37,211,102,.13);
-      border-color: rgba(37,211,102,.22);
+    .connect-row{display:grid;grid-template-columns:1.3fr 1fr auto;gap:10px}
+    .connect-row input{
+      min-width:0;padding:12px 14px;border-radius:12px;border:1px solid #2a3b45;background:#0f1b22;color:var(--text);outline:none;
     }
-    .filters {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 8px;
-      padding: 12px;
-      border-bottom: 1px solid var(--border);
+    .connect-row .btn{padding:12px 16px;border-radius:12px}
+    .search{padding:0 18px 16px;border-bottom:1px solid var(--line)}
+    .search input{
+      width:100%;padding:13px 15px;border-radius:14px;border:1px solid #2a3b45;background:#0f1b22;color:var(--text);outline:none;
     }
-    .conversation-list {
-      overflow: auto;
-      height: calc(100vh - 170px);
+    .tabs-top{display:flex;gap:8px;padding:14px 18px 10px;overflow:auto}
+    .main-tab,.sub-tab{
+      border:none;cursor:pointer;white-space:nowrap;border-radius:999px;padding:11px 16px;font-weight:600;
+      background:#132028;color:#9fb0b9;
     }
-    .conversation-item {
-      display: grid;
-      grid-template-columns: 52px 1fr auto;
-      gap: 12px;
-      padding: 14px 14px;
-      border-bottom: 1px solid var(--border);
-      cursor: pointer;
-      transition: background .18s ease;
+    .main-tab.active,.sub-tab.active{background:#123829;color:white;box-shadow:inset 0 0 0 1px rgba(37,211,102,.18)}
+    .sub-tabs{display:flex;gap:8px;padding:0 18px 14px;overflow:auto;border-bottom:1px solid var(--line)}
+    .list{flex:1;overflow:auto}
+    .conv-item{
+      display:grid;grid-template-columns:56px 1fr auto;gap:12px;padding:14px 18px;cursor:pointer;border-bottom:1px solid rgba(255,255,255,.04)
     }
-    .conversation-item:hover, .conversation-item.active { background: rgba(255,255,255,.03); }
-    .avatar {
-      width: 52px;
-      height: 52px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, #1f2c34, #2a3942);
-      display: grid;
-      place-items: center;
-      font-weight: 700;
-      color: #d3dfe4;
+    .conv-item:hover,.conv-item.active{background:#162229}
+    .avatar{
+      width:56px;height:56px;border-radius:50%;background:#22333c;color:#dce7eb;display:grid;place-items:center;font-weight:700;font-size:20px
     }
-    .conv-top {
-      display: flex;
-      gap: 8px;
-      justify-content: space-between;
-      align-items: baseline;
-      margin-bottom: 4px;
+    .conv-main{min-width:0;display:grid;gap:6px}
+    .row-between{display:flex;justify-content:space-between;gap:10px;align-items:center}
+    .name{font-size:16px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .preview{font-size:13px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .time{font-size:12px;color:var(--muted)}
+    .chips{display:flex;gap:8px;flex-wrap:wrap}
+    .chip{padding:6px 10px;border-radius:999px;font-size:11px;background:#16252d;color:#cfe0e6;border:1px solid rgba(255,255,255,.05)}
+    .chip.green{background:#123829;color:#c8ffe3}
+    .chip.yellow{background:#3a3314;color:#f8efb2}
+    .chip.red{background:#3c1f24;color:#fecaca}
+    .empty-list{padding:30px 22px;color:var(--muted);line-height:1.6;text-align:center}
+
+    .main{
+      flex:1;display:flex;flex-direction:column;min-width:0;background:var(--bg)
     }
-    .conv-name { font-weight: 700; }
-    .conv-time { color: var(--muted); font-size: 12px; white-space: nowrap; }
-    .conv-last {
-      color: var(--muted);
-      font-size: 13px;
-      display: -webkit-box;
-      -webkit-line-clamp: 2;
-      -webkit-box-orient: vertical;
-      overflow: hidden;
+    .topbar{
+      height:72px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 18px;background:rgba(11,20,26,.92)
     }
-    .chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
-    .chip {
-      background: var(--chip);
-      color: #cdd6da;
-      border-radius: 999px;
-      padding: 4px 8px;
-      font-size: 11px;
-      border: 1px solid var(--border);
+    .topbar-left{display:flex;gap:10px;align-items:center}
+    .topbar h3{margin:0;font-size:18px}
+    .topbar p{margin:4px 0 0;color:var(--muted);font-size:13px}
+    .workspace{flex:1;display:flex;min-height:0}
+    .chat-wrap{flex:1;display:flex;flex-direction:column;min-width:0}
+    .chat-header{
+      padding:16px 18px;border-bottom:1px solid rgba(255,255,255,.05);display:flex;justify-content:space-between;gap:16px;align-items:center;background:rgba(11,20,26,.88)
     }
-    .badge {
-      min-width: 22px;
-      height: 22px;
-      border-radius: 999px;
-      display: grid;
-      place-items: center;
-      background: var(--accent);
-      color: #08261b;
-      font-size: 12px;
-      font-weight: 700;
-      align-self: center;
+    .chat-contact{display:flex;gap:14px;align-items:center;min-width:0}
+    .chat-contact h4{margin:0;font-size:18px}
+    .chat-contact p{margin:5px 0 0;color:var(--muted);font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .chat-actions{display:flex;gap:10px;flex-wrap:wrap}
+    .chat-actions .btn{padding:12px 16px}
+    .messages{
+      flex:1;overflow:auto;padding:24px min(7vw,72px);display:flex;flex-direction:column;gap:10px;
+      background:
+        radial-gradient(rgba(255,255,255,.02) 1px, transparent 1px),
+        linear-gradient(180deg, rgba(18,28,34,.35), rgba(9,16,21,.35));
+      background-size:18px 18px, auto;
     }
-    .chat {
-      display: grid;
-      grid-template-rows: auto 1fr auto;
-      background: #0f171c;
+    .msg-row{display:flex}
+    .msg-row.in{justify-content:flex-start}
+    .msg-row.out{justify-content:flex-end}
+    .bubble{
+      max-width:min(72%,740px);padding:10px 12px 7px;border-radius:14px;line-height:1.45;box-shadow:0 6px 16px rgba(0,0,0,.12)
     }
-    .chat-header {
-      display: flex;
-      gap: 12px;
-      align-items: center;
-      padding: 14px 16px;
-      background: var(--panel);
-      border-bottom: 1px solid var(--border);
+    .msg-row.in .bubble{background:var(--in);border-top-left-radius:4px}
+    .msg-row.out .bubble{background:var(--out);border-top-right-radius:4px}
+    .sender{font-size:12px;font-weight:700;color:#86efac;margin-bottom:5px}
+    .meta{display:flex;gap:8px;justify-content:flex-end;margin-top:6px;font-size:11px;color:#b6c5cc}
+    .composer{
+      border-top:1px solid var(--line);padding:14px 16px;background:#182229;display:flex;gap:12px;align-items:flex-end
     }
-    .chat-header-actions {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-      margin-left: auto;
+    .composer textarea{
+      flex:1;min-height:56px;max-height:140px;resize:vertical;border:none;outline:none;border-radius:16px;
+      background:#0f1b22;color:var(--text);padding:14px 16px
     }
-    .messages {
-      overflow: auto;
-      padding: 18px;
-      background-image:
-        radial-gradient(rgba(255,255,255,.018) 1px, transparent 1px),
-        radial-gradient(rgba(255,255,255,.016) 1px, transparent 1px);
-      background-position: 0 0, 25px 25px;
-      background-size: 50px 50px;
+    .composer .btn{padding:14px 18px;border-radius:16px}
+    .empty-chat{flex:1;display:grid;place-items:center;color:var(--muted);text-align:center;padding:40px}
+    .empty-chat .icon{font-size:64px;margin-bottom:12px;opacity:.7}
+
+    .insights{
+      width:360px;min-width:360px;border-left:1px solid var(--line);background:linear-gradient(180deg,#0f1b22,#0d171d);overflow:auto
     }
-    .empty {
-      display: grid;
-      place-items: center;
-      height: 100%;
-      color: var(--muted);
-      text-align: center;
-      padding: 24px;
+    .insights .section{padding:18px;border-bottom:1px solid rgba(255,255,255,.05)}
+    .insights h3,.insights h4{margin:0 0 14px}
+    .stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    .stat{
+      background:#16232b;border:1px solid rgba(255,255,255,.05);padding:16px;border-radius:18px
     }
-    .message-row {
-      display: flex;
-      margin: 8px 0;
+    .stat .label{font-size:13px;color:var(--muted)}
+    .stat .value{font-size:36px;font-weight:800;margin-top:8px}
+    .progress-list{display:grid;gap:12px}
+    .progress .label{display:flex;justify-content:space-between;margin-bottom:7px;font-size:13px;color:#dbe4e8}
+    .bar{height:10px;background:#16232b;border-radius:999px;overflow:hidden}
+    .bar > span{display:block;height:100%;background:linear-gradient(90deg,var(--accent),var(--accent-2));border-radius:999px}
+    .queue{display:grid;gap:10px}
+    .queue-item{background:#16232b;padding:12px;border-radius:14px;border:1px solid rgba(255,255,255,.04)}
+    .muted{color:var(--muted)}
+
+    .kanban-view{display:none;flex:1;min-height:0;padding:18px;overflow:auto;background:linear-gradient(180deg,#0b141a,#0d171d)}
+    .kanban-view.active{display:block}
+    .kanban-grid{display:grid;grid-template-columns:repeat(4,minmax(270px,1fr));gap:16px;min-width:1160px}
+    .column{background:#101b22;border:1px solid rgba(255,255,255,.05);border-radius:22px;display:flex;flex-direction:column;min-height:calc(100vh - 140px)}
+    .column-head{padding:16px 16px 12px;border-bottom:1px solid rgba(255,255,255,.05);display:flex;justify-content:space-between;gap:10px;align-items:center}
+    .column-head h4{margin:0;font-size:15px}
+    .count{background:#16252d;border-radius:999px;padding:6px 10px;font-size:12px;color:#dce7eb}
+    .cards{padding:14px;display:grid;gap:12px;align-content:start}
+    .card{
+      background:#16232b;border:1px solid rgba(255,255,255,.05);border-radius:18px;padding:14px;cursor:pointer;transition:.18s transform,.18s border-color,.18s background
     }
-    .message-row.me { justify-content: flex-end; }
-    .bubble {
-      max-width: 78%;
-      padding: 10px 12px 8px;
-      border-radius: 12px;
-      background: var(--bubble-other);
-      box-shadow: var(--shadow);
-      border: 1px solid var(--border);
+    .card:hover{transform:translateY(-1px);border-color:rgba(37,211,102,.25);background:#182730}
+    .card h5{margin:0 0 6px;font-size:15px}
+    .card p{margin:0 0 12px;color:var(--muted);font-size:13px;line-height:1.45}
+    .card .mini{display:flex;justify-content:space-between;gap:8px;font-size:12px;color:#c7d6dc}
+
+    .toast{
+      position:fixed;right:20px;bottom:20px;background:#142028;color:#e9edef;border:1px solid #2b3c46;
+      border-radius:14px;padding:14px 16px;box-shadow:var(--shadow);opacity:0;transform:translateY(16px);transition:.22s;pointer-events:none;z-index:999
     }
-    .message-row.me .bubble {
-      background: var(--bubble-me);
-      border-color: rgba(255,255,255,.05);
+    .toast.show{opacity:1;transform:translateY(0)}
+    .toast.success{border-color:rgba(37,211,102,.35)}
+    .toast.error{border-color:rgba(239,68,68,.35)}
+
+    @media (max-width: 1300px){
+      .insights{display:none}
     }
-    .meta {
-      display: flex;
-      gap: 8px;
-      justify-content: flex-end;
-      margin-top: 6px;
-      color: rgba(255,255,255,.72);
-      font-size: 11px;
-    }
-    .composer {
-      padding: 14px;
-      background: var(--panel);
-      border-top: 1px solid var(--border);
-      display: grid;
-      grid-template-columns: 1fr auto;
-      gap: 10px;
-      align-items: end;
-    }
-    textarea.field {
-      min-height: 52px;
-      max-height: 160px;
-      resize: vertical;
-      width: 100%;
-    }
-    .rightbar {
-      overflow: auto;
-    }
-    .panel-block {
-      padding: 16px;
-      border-bottom: 1px solid var(--border);
-    }
-    .section-title {
-      font-size: 14px;
-      font-weight: 700;
-      margin-bottom: 10px;
-    }
-    .stats-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-    }
-    .stat-card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 14px;
-    }
-    .stat-value { font-size: 24px; font-weight: 800; margin-top: 6px; }
-    .progress {
-      width: 100%;
-      height: 10px;
-      border-radius: 999px;
-      background: rgba(255,255,255,.06);
-      overflow: hidden;
-      margin-top: 8px;
-    }
-    .progress > span {
-      display: block;
-      height: 100%;
-      background: linear-gradient(90deg, var(--accent-2), var(--accent));
-      width: 0;
-    }
-    .list-mini { display: grid; gap: 8px; }
-    .mini-item {
-      padding: 10px 12px;
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      display: flex;
-      justify-content: space-between;
-      gap: 8px;
-      align-items: center;
-      font-size: 13px;
-    }
-    .status-dot {
-      width: 10px;
-      height: 10px;
-      border-radius: 50%;
-      display: inline-block;
-      background: var(--accent);
-      margin-right: 8px;
-    }
-    .tiny { font-size: 12px; color: var(--muted); }
-    .hide { display: none !important; }
-    .footer-note {
-      padding: 10px 16px;
-      font-size: 12px;
-      color: var(--muted);
-      border-top: 1px solid var(--border);
-    }
-    @media (max-width: 1180px) {
-      .app { grid-template-columns: 340px 1fr; }
-      .rightbar { display: none; }
-    }
-    @media (max-width: 820px) {
-      .app { grid-template-columns: 1fr; }
-      .sidebar { display: none; }
+    @media (max-width: 980px){
+      .sidebar{width:100%;min-width:0}
+      .main{display:none}
+      .app.mobile-chat .sidebar{display:none}
+      .app.mobile-chat .main{display:flex}
+      .connect-row{grid-template-columns:1fr}
     }
   </style>
 </head>
 <body>
-  <div class="app">
-    <aside class="sidebar">
-      <div class="topbar">
+  <div id="login" class="login">
+    <div class="login-card">
+      <div class="brand">
+        <div class="brand-badge">W</div>
         <div>
-          <div class="title">Painel Manager</div>
-          <div class="muted tiny">WhatsApp + n8n + CRM</div>
+          <h1>Painel Manager</h1>
+          <p>WhatsApp + n8n + CRM visual WantCash</p>
         </div>
       </div>
-
-      <div class="filters">
-        <div class="login-box">
-          <input id="n8nUrl" class="field grow" placeholder="https://wantcashtopcard.app.n8n.cloud" />
-          <input id="managerName" class="field" placeholder="Nome do manager" style="width: 160px;" />
-          <button id="saveConfigBtn" class="btn btn-primary">Conectar</button>
+      <div class="fields">
+        <div class="field">
+          <label>URL base do n8n</label>
+          <input id="n8nUrl" placeholder="https://wantcashtopcard.app.n8n.cloud" />
         </div>
-        <input id="searchInput" class="field" placeholder="Buscar por nome, número, bucket, etapa..." />
-      </div>
-
-      <div class="tabs">
-        <div class="tab active" data-tab="ultimas">Últimas conversas</div>
-        <div class="tab" data-tab="manager">Aguardando manager</div>
-        <div class="tab" data-tab="bot">Interagiu com o bot</div>
-        <div class="tab" data-tab="humano">Interagiu com o humano</div>
-        <div class="tab" data-tab="link">Enviou o link</div>
-      </div>
-
-      <div id="conversationList" class="conversation-list"></div>
-    </aside>
-
-    <main class="chat">
-      <div class="chat-header">
-        <div id="chatAvatar" class="avatar">?</div>
-        <div>
-          <div id="chatName" class="title" style="font-size:16px;">Selecione uma conversa</div>
-          <div id="chatSub" class="muted tiny">Nenhuma conversa carregada</div>
+        <div class="field">
+          <label>Nome do manager</label>
+          <input id="managerName" placeholder="Ex: Enzo Almeida Altoé" />
         </div>
-        <div class="chat-header-actions">
-          <button id="refreshBtn" class="btn btn-ghost">Atualizar</button>
-          <button id="returnToBotBtn" class="btn btn-ghost hide">Retornar para o bot</button>
+        <div class="field">
+          <label>Phone Number ID (opcional)</label>
+          <input id="phoneId" placeholder="1069703939552957" />
         </div>
       </div>
-
-      <div id="messages" class="messages">
-        <div class="empty">Conecte o painel ao n8n e selecione uma conversa.</div>
+      <div class="login-actions">
+        <button class="btn btn-primary" id="loginBtn">Conectar ao painel</button>
+        <button class="btn btn-secondary" id="demoBtn">Preencher exemplo</button>
       </div>
-
-      <div class="composer">
-        <textarea id="messageInput" class="field" placeholder="Digite a resposta do manager..."></textarea>
-        <button id="sendBtn" class="btn btn-primary">Enviar</button>
-      </div>
-    </main>
-
-    <aside class="rightbar">
-      <div class="topbar">
-        <div class="title" style="font-size:16px;">Insights</div>
-      </div>
-
-      <div class="panel-block">
-        <div class="section-title">Resumo geral</div>
-        <div class="stats-grid">
-          <div class="stat-card">
-            <div class="tiny">Conversas</div>
-            <div id="statTotal" class="stat-value">0</div>
-          </div>
-          <div class="stat-card">
-            <div class="tiny">Aguardando manager</div>
-            <div id="statManager" class="stat-value">0</div>
-          </div>
-          <div class="stat-card">
-            <div class="tiny">Interagiu com o bot</div>
-            <div id="statBot" class="stat-value">0</div>
-          </div>
-          <div class="stat-card">
-            <div class="tiny">Enviou o link</div>
-            <div id="statLink" class="stat-value">0</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="panel-block">
-        <div class="section-title">Distribuição do CRM</div>
-        <div class="tiny">Bot</div>
-        <div class="progress"><span id="barBot"></span></div>
-        <div class="tiny" style="margin-top:10px;">Humano</div>
-        <div class="progress"><span id="barHumano"></span></div>
-        <div class="tiny" style="margin-top:10px;">Link enviado</div>
-        <div class="progress"><span id="barLink"></span></div>
-      </div>
-
-      <div class="panel-block">
-        <div class="section-title">Fila de atenção</div>
-        <div id="attentionList" class="list-mini"></div>
-      </div>
-
-      <div class="panel-block">
-        <div class="section-title">Conversa atual</div>
-        <div id="currentMeta" class="list-mini">
-          <div class="mini-item"><span>Status</span><span class="muted">-</span></div>
-        </div>
-      </div>
-
-      <div class="footer-note">Atualização automática a cada 5 segundos.</div>
-    </aside>
+      <div class="tip">Use apenas a base do n8n, sem <code>/webhook</code>. O painel atualiza a cada 5 segundos.</div>
+      <div class="error" id="loginError">Preencha URL do n8n e nome do manager.</div>
+    </div>
   </div>
+
+  <div id="app" class="app hidden">
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-title">
+          <div>
+            <h2>Painel Manager</h2>
+            <p>WhatsApp + n8n + CRM</p>
+          </div>
+          <div class="header-actions">
+            <button class="icon-btn" id="refreshBtn" title="Atualizar">↻</button>
+            <button class="icon-btn" id="logoutBtn" title="Sair">⏻</button>
+          </div>
+        </div>
+        <div class="connect-row">
+          <input id="inlineUrl" placeholder="URL do n8n" />
+          <input id="inlineManager" placeholder="Nome do manager" />
+          <button class="btn btn-primary" id="connectBtn">Conectar</button>
+        </div>
+      </div>
+
+      <div class="search">
+        <input id="searchInput" placeholder="Buscar por nome, número, bucket, etapa..." />
+      </div>
+
+      <div class="tabs-top">
+        <button class="main-tab active" data-main-tab="conversas">Conversas</button>
+        <button class="main-tab" data-main-tab="crm">CRM Kanban</button>
+      </div>
+
+      <div id="sidebarConversas">
+        <div class="sub-tabs">
+          <button class="sub-tab active" data-sub-tab="ultimas">Últimas conversas</button>
+          <button class="sub-tab" data-sub-tab="aguardando">Aguardando manager</button>
+          <button class="sub-tab" data-sub-tab="bot">Interagiu com o bot</button>
+          <button class="sub-tab" data-sub-tab="humano">Interagiu com o humano</button>
+          <button class="sub-tab" data-sub-tab="link">Enviou o link</button>
+        </div>
+        <div class="list" id="conversationList"></div>
+      </div>
+
+      <div id="sidebarKanban" class="hidden">
+        <div class="empty-list">Use a aba <strong>CRM Kanban</strong> no painel central para visualizar o pipeline.</div>
+      </div>
+    </aside>
+
+    <main class="main">
+      <div class="topbar">
+        <div class="topbar-left">
+          <div class="avatar" style="width:50px;height:50px">?</div>
+          <div>
+            <h3 id="workspaceTitle">Selecione uma conversa</h3>
+            <p id="workspaceSubtitle">Nenhuma conversa carregada</p>
+          </div>
+        </div>
+        <div class="chat-actions">
+          <button class="btn btn-secondary" id="refreshChatBtn">Atualizar</button>
+          <button class="btn btn-secondary" id="returnBotBtn">Retornar para o bot</button>
+        </div>
+      </div>
+
+      <section id="chatView" class="workspace">
+        <div class="chat-wrap">
+          <div class="chat-header" id="chatHeader">
+            <div class="chat-contact">
+              <div class="avatar" id="chatAvatar">?</div>
+              <div>
+                <h4 id="chatName">Selecione uma conversa</h4>
+                <p id="chatMeta">Nenhuma conversa carregada</p>
+              </div>
+            </div>
+          </div>
+          <div class="messages" id="messagesArea">
+            <div class="empty-chat">
+              <div>
+                <div class="icon">💬</div>
+                <div>Selecione uma conversa para visualizar.</div>
+              </div>
+            </div>
+          </div>
+          <div class="composer">
+            <textarea id="replyBox" placeholder="Digite sua resposta como manager..."></textarea>
+            <button class="btn btn-primary" id="sendReplyBtn">Enviar</button>
+          </div>
+        </div>
+
+        <aside class="insights">
+          <div class="section">
+            <h3>Insights</h3>
+            <div class="stats-grid">
+              <div class="stat"><div class="label">Conversas</div><div class="value" id="statTotal">0</div></div>
+              <div class="stat"><div class="label">Aguardando manager</div><div class="value" id="statQueue">0</div></div>
+              <div class="stat"><div class="label">Interagiu com o bot</div><div class="value" id="statBot">0</div></div>
+              <div class="stat"><div class="label">Enviou o link</div><div class="value" id="statLink">0</div></div>
+            </div>
+          </div>
+          <div class="section">
+            <h4>Distribuição do CRM</h4>
+            <div class="progress-list">
+              <div class="progress"><div class="label"><span>Bot</span><span id="pctBot">0%</span></div><div class="bar"><span id="barBot" style="width:0%"></span></div></div>
+              <div class="progress"><div class="label"><span>Humano</span><span id="pctHumano">0%</span></div><div class="bar"><span id="barHumano" style="width:0%"></span></div></div>
+              <div class="progress"><div class="label"><span>Link enviado</span><span id="pctLink">0%</span></div><div class="bar"><span id="barLink" style="width:0%"></span></div></div>
+            </div>
+          </div>
+          <div class="section">
+            <h4>Fila de atenção</h4>
+            <div class="queue" id="queueList"></div>
+          </div>
+          <div class="section">
+            <h4>Conversa atual</h4>
+            <div id="currentInfo" class="muted">Selecione uma conversa para ver detalhes.</div>
+          </div>
+        </aside>
+      </section>
+
+      <section id="kanbanView" class="kanban-view">
+        <div class="kanban-grid">
+          <div class="column">
+            <div class="column-head"><h4>Interagiu com o bot</h4><span class="count" id="countBot">0</span></div>
+            <div class="cards" id="cardsBot"></div>
+          </div>
+          <div class="column">
+            <div class="column-head"><h4>Aguardando manager</h4><span class="count" id="countQueue">0</span></div>
+            <div class="cards" id="cardsQueue"></div>
+          </div>
+          <div class="column">
+            <div class="column-head"><h4>Interagiu com o humano</h4><span class="count" id="countHumano">0</span></div>
+            <div class="cards" id="cardsHumano"></div>
+          </div>
+          <div class="column">
+            <div class="column-head"><h4>Enviou o link</h4><span class="count" id="countLink">0</span></div>
+            <div class="cards" id="cardsLink"></div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div id="toast" class="toast"></div>
 
   <script>
     const state = {
-      n8nUrl: localStorage.getItem('crm_n8n_url') || 'https://wantcashtopcard.app.n8n.cloud',
-      managerName: localStorage.getItem('crm_manager_name') || '',
-      activeTab: 'ultimas',
-      allConversations: [],
-      selectedNumber: null,
-      polling: null,
-      lastPayload: null,
+      n8nUrl: '',
+      managerName: '',
+      phoneId: '',
+      crmData: null,
+      currentConversation: null,
+      poller: null,
+      currentMainTab: 'conversas',
+      currentSubTab: 'ultimas',
+      searchTerm: ''
     };
 
-    const els = {
-      n8nUrl: document.getElementById('n8nUrl'),
-      managerName: document.getElementById('managerName'),
-      saveConfigBtn: document.getElementById('saveConfigBtn'),
-      searchInput: document.getElementById('searchInput'),
-      conversationList: document.getElementById('conversationList'),
-      tabs: [...document.querySelectorAll('.tab')],
-      messages: document.getElementById('messages'),
-      messageInput: document.getElementById('messageInput'),
-      sendBtn: document.getElementById('sendBtn'),
-      returnToBotBtn: document.getElementById('returnToBotBtn'),
-      refreshBtn: document.getElementById('refreshBtn'),
-      chatName: document.getElementById('chatName'),
-      chatSub: document.getElementById('chatSub'),
-      chatAvatar: document.getElementById('chatAvatar'),
-      statTotal: document.getElementById('statTotal'),
-      statManager: document.getElementById('statManager'),
-      statBot: document.getElementById('statBot'),
-      statLink: document.getElementById('statLink'),
-      barBot: document.getElementById('barBot'),
-      barHumano: document.getElementById('barHumano'),
-      barLink: document.getElementById('barLink'),
-      attentionList: document.getElementById('attentionList'),
-      currentMeta: document.getElementById('currentMeta'),
-    };
+    const $ = (id) => document.getElementById(id);
 
-    function toast(msg) {
-      alert(msg);
+    function showToast(msg, type='success') {
+      const t = $('toast');
+      t.textContent = msg;
+      t.className = `toast show ${type}`;
+      clearTimeout(showToast._timer);
+      showToast._timer = setTimeout(() => t.className = 'toast', 2600);
     }
 
-    function escapeHtml(v) {
-      return String(v ?? '')
+    function savePrefs() {
+      localStorage.setItem('wantcash_panel_v2', JSON.stringify({
+        n8nUrl: state.n8nUrl,
+        managerName: state.managerName,
+        phoneId: state.phoneId
+      }));
+    }
+
+    function loadPrefs() {
+      try {
+        const raw = localStorage.getItem('wantcash_panel_v2');
+        if (!raw) return;
+        const data = JSON.parse(raw);
+        state.n8nUrl = data.n8nUrl || '';
+        state.managerName = data.managerName || '';
+        state.phoneId = data.phoneId || '';
+      } catch {}
+    }
+
+    function fillInputs() {
+      $('n8nUrl').value = state.n8nUrl;
+      $('managerName').value = state.managerName;
+      $('phoneId').value = state.phoneId;
+      $('inlineUrl').value = state.n8nUrl;
+      $('inlineManager').value = state.managerName;
+    }
+
+    function doConnect(fromLogin = false) {
+      const url = (fromLogin ? $('n8nUrl').value : $('inlineUrl').value).trim().replace(/\/$/, '');
+      const manager = (fromLogin ? $('managerName').value : $('inlineManager').value).trim();
+      const phoneId = $('phoneId').value.trim();
+
+      if (!url || !manager) {
+        $('loginError').style.display = 'block';
+        $('loginError').textContent = 'Preencha URL do n8n e nome do manager.';
+        return;
+      }
+
+      $('loginError').style.display = 'none';
+      state.n8nUrl = url;
+      state.managerName = manager;
+      state.phoneId = phoneId;
+      savePrefs();
+      fillInputs();
+
+      $('login').classList.add('hidden');
+      $('app').classList.remove('hidden');
+      loadHistory();
+
+      clearInterval(state.poller);
+      state.poller = setInterval(loadHistory, 5000);
+      showToast('Painel conectado.');
+    }
+
+    async function safeFetchJson(url, options = {}) {
+      const res = await fetch(url, options);
+      const text = await res.text();
+      let data = {};
+      try { data = text ? JSON.parse(text) : {}; } catch { data = { raw: text }; }
+      if (!res.ok) {
+        throw new Error(data.mensagem || data.message || data.error || data.raw || `HTTP ${res.status}`);
+      }
+      return data;
+    }
+
+    function formatDate(ts) {
+      if (!ts) return '';
+      const d = new Date(ts);
+      if (Number.isNaN(d.getTime())) return ts;
+      return d.toLocaleDateString('pt-BR', { day:'2-digit', month:'2-digit' }) + ', ' +
+             d.toLocaleTimeString('pt-BR', { hour:'2-digit', minute:'2-digit' });
+    }
+
+    function avatarText(conv) {
+      const source = (conv.nome || conv.numero || '?').trim();
+      return source.slice(0,2).toUpperCase();
+    }
+
+    function normalizeAllConversations() {
+      const data = state.crmData || {};
+      const added = new Map();
+      const groups = [
+        ...(data.tabs?.ultimas_conversas || []),
+        ...(data.tabs?.aguardando_manager || []),
+        ...(data.crm?.INTERAGIU_COM_BOT || []),
+        ...(data.crm?.INTERAGIU_COM_HUMANO || []),
+        ...(data.crm?.ENVIOU_O_LINK || [])
+      ];
+      groups.forEach(conv => {
+        if (!conv || !conv.numero) return;
+        if (!added.has(String(conv.numero))) added.set(String(conv.numero), conv);
+      });
+      return [...added.values()];
+    }
+
+    function getCurrentSubList() {
+      const data = state.crmData || {};
+      switch (state.currentSubTab) {
+        case 'aguardando': return data.tabs?.aguardando_manager || [];
+        case 'bot': return data.crm?.INTERAGIU_COM_BOT || [];
+        case 'humano': return data.crm?.INTERAGIU_COM_HUMANO || [];
+        case 'link': return data.crm?.ENVIOU_O_LINK || [];
+        default: return data.tabs?.ultimas_conversas || [];
+      }
+    }
+
+    function renderConversationList() {
+      const root = $('conversationList');
+      const term = state.searchTerm.toLowerCase();
+      const list = getCurrentSubList().filter(conv => {
+        const hay = [
+          conv.nome,
+          conv.numero,
+          conv.crm_bucket,
+          conv.etapa_fechamento,
+          conv.ultima_texto,
+          conv.modo
+        ].join(' ').toLowerCase();
+        return hay.includes(term);
+      });
+
+      if (!list.length) {
+        root.innerHTML = '<div class="empty-list">Nenhuma conversa encontrada.</div>';
+        return;
+      }
+
+      root.innerHTML = list.map(conv => {
+        const active = state.currentConversation && String(state.currentConversation.numero) === String(conv.numero);
+        const bucketLabel = conv.crm_bucket || 'SEM_BUCKET';
+        const modo = conv.modo === 'humano' ? 'modo: humano' : 'modo: bot';
+        const queue = conv.aguardando_manager ? '<span class="chip yellow">aguardando manager</span>' : '';
+        return `
+          <div class="conv-item ${active ? 'active' : ''}" data-numero="${conv.numero}">
+            <div class="avatar">${avatarText(conv)}</div>
+            <div class="conv-main">
+              <div class="row-between">
+                <div class="name">${escapeHtml(conv.nome || conv.numero)}</div>
+                <div class="time">${formatDate(conv.last_updated_at)}</div>
+              </div>
+              <div class="preview">${escapeHtml(conv.ultima_texto || 'Sem mensagem')}</div>
+              <div class="chips">
+                <span class="chip green">${escapeHtml(bucketLabel)}</span>
+                <span class="chip">${escapeHtml(conv.etapa_fechamento || 'sem etapa')}</span>
+                <span class="chip">${escapeHtml(modo)}</span>
+                ${queue}
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      root.querySelectorAll('.conv-item').forEach(el => {
+        el.addEventListener('click', () => {
+          const conv = normalizeAllConversations().find(c => String(c.numero) === el.dataset.numero);
+          if (conv) openConversation(conv);
+        });
+      });
+    }
+
+    function messageDirection(msg) {
+      if (!msg) return 'in';
+      if (msg.tipo === 'outbound') return 'out';
+      if ((msg.origem || '').toLowerCase() === 'painel') return 'out';
+      if ((msg.de || '').toLowerCase() === 'manager') return 'out';
+      if ((msg.autor || '').toLowerCase().includes('bot')) return 'out';
+      return 'in';
+    }
+
+    function renderMessages(conv) {
+      const root = $('messagesArea');
+      const mensagens = conv.mensagens || [];
+      if (!mensagens.length) {
+        root.innerHTML = '<div class="empty-chat"><div><div class="icon">💬</div><div>Sem mensagens nesta conversa.</div></div></div>';
+        return;
+      }
+      root.innerHTML = mensagens.map(msg => {
+        const dir = messageDirection(msg);
+        const sender = msg.autor || (dir === 'out' ? state.managerName : conv.nome || conv.numero);
+        return `
+          <div class="msg-row ${dir}">
+            <div class="bubble">
+              ${dir === 'out' ? `<div class="sender">${escapeHtml(sender)}</div>` : ''}
+              <div>${escapeHtml(msg.texto || '')}</div>
+              <div class="meta">
+                <span>${formatDate(msg.timestamp)}</span>
+                ${dir === 'out' ? '<span>✓✓</span>' : ''}
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+      root.scrollTop = root.scrollHeight;
+    }
+
+    function openConversation(conv) {
+      state.currentConversation = conv;
+      $('workspaceTitle').textContent = conv.nome || conv.numero;
+      $('workspaceSubtitle').textContent = `${conv.numero} • ${conv.crm_bucket || 'SEM_BUCKET'} • ${conv.modo === 'humano' ? 'manager' : 'bot'}${conv.manager_responsavel ? ' • manager: ' + conv.manager_responsavel : ''}`;
+      $('chatAvatar').textContent = avatarText(conv);
+      $('chatName').textContent = conv.nome || conv.numero;
+      $('chatMeta').textContent = `${conv.numero} • ${conv.crm_bucket || 'SEM_BUCKET'} • ${conv.etapa_fechamento || 'sem etapa'}`;
+      renderMessages(conv);
+      $('currentInfo').innerHTML = `
+        <div><strong>Número:</strong> ${escapeHtml(conv.numero || '-')}</div>
+        <div><strong>Bucket:</strong> ${escapeHtml(conv.crm_bucket || '-')}</div>
+        <div><strong>Etapa:</strong> ${escapeHtml(conv.etapa_fechamento || '-')}</div>
+        <div><strong>Modo:</strong> ${escapeHtml(conv.modo || '-')}</div>
+        <div><strong>Manager:</strong> ${escapeHtml(conv.manager_responsavel || '-')}</div>
+        <div><strong>Última atualização:</strong> ${escapeHtml(formatDate(conv.last_updated_at) || '-')}</div>
+      `;
+      renderConversationList();
+      if (window.innerWidth <= 980) $('app').classList.add('mobile-chat');
+    }
+
+    function renderInsights() {
+      const stats = state.crmData?.stats || {};
+      $('statTotal').textContent = stats.total_conversas || 0;
+      $('statQueue').textContent = stats.aguardando_manager || 0;
+      $('statBot').textContent = stats.interagiu_com_bot || 0;
+      $('statLink').textContent = stats.enviou_link || 0;
+
+      const total = Math.max(1, Number(stats.total_conversas || 0));
+      const botPct = Math.round(((stats.interagiu_com_bot || 0) / total) * 100);
+      const humPct = Math.round(((stats.interagiu_com_humano || 0) / total) * 100);
+      const linkPct = Math.round(((stats.enviou_link || 0) / total) * 100);
+
+      $('pctBot').textContent = `${botPct}%`;
+      $('pctHumano').textContent = `${humPct}%`;
+      $('pctLink').textContent = `${linkPct}%`;
+      $('barBot').style.width = `${botPct}%`;
+      $('barHumano').style.width = `${humPct}%`;
+      $('barLink').style.width = `${linkPct}%`;
+
+      const queue = state.crmData?.tabs?.aguardando_manager || [];
+      $('queueList').innerHTML = queue.length ? queue.map(conv => `
+        <div class="queue-item">
+          <div><strong>${escapeHtml(conv.nome || conv.numero)}</strong></div>
+          <div class="muted">${escapeHtml(conv.numero || '')}</div>
+          <div class="muted">${escapeHtml(conv.ultima_texto || '')}</div>
+        </div>
+      `).join('') : '<div class="muted">Nenhuma conversa aguardando manager.</div>';
+    }
+
+    function renderKanban() {
+      const crm = state.crmData?.crm || {};
+      const queue = state.crmData?.tabs?.aguardando_manager || [];
+      renderKanbanColumn('cardsBot', crm.INTERAGIU_COM_BOT || [], 'countBot');
+      renderKanbanColumn('cardsQueue', queue, 'countQueue');
+      renderKanbanColumn('cardsHumano', crm.INTERAGIU_COM_HUMANO || [], 'countHumano');
+      renderKanbanColumn('cardsLink', crm.ENVIOU_O_LINK || [], 'countLink');
+    }
+
+    function renderKanbanColumn(cardsId, list, countId) {
+      $(countId).textContent = list.length;
+      $(cardsId).innerHTML = list.length ? list.map(conv => `
+        <div class="card" data-kanban-numero="${conv.numero}">
+          <h5>${escapeHtml(conv.nome || conv.numero)}</h5>
+          <p>${escapeHtml(conv.ultima_texto || 'Sem mensagem')}</p>
+          <div class="chips" style="margin-bottom:10px">
+            <span class="chip">${escapeHtml(conv.etapa_fechamento || 'sem etapa')}</span>
+            <span class="chip ${conv.modo === 'humano' ? 'yellow' : ''}">${escapeHtml(conv.modo || 'bot')}</span>
+          </div>
+          <div class="mini">
+            <span>${escapeHtml(conv.numero || '')}</span>
+            <span>${formatDate(conv.last_updated_at)}</span>
+          </div>
+        </div>
+      `).join('') : '<div class="muted" style="padding:4px 2px">Nenhuma conversa nesta coluna.</div>';
+
+      $(cardsId).querySelectorAll('.card').forEach(card => {
+        card.addEventListener('click', () => {
+          const conv = normalizeAllConversations().find(c => String(c.numero) === card.dataset.kanbanNumero);
+          if (conv) {
+            setMainTab('conversas');
+            openConversation(conv);
+          }
+        });
+      });
+    }
+
+    async function loadHistory() {
+      if (!state.n8nUrl) return;
+      try {
+        const data = await safeFetchJson(`${state.n8nUrl}/webhook/whatsapp-historico`);
+        state.crmData = data;
+        renderConversationList();
+        renderInsights();
+        renderKanban();
+
+        if (state.currentConversation?.numero) {
+          const updated = normalizeAllConversations().find(c => String(c.numero) === String(state.currentConversation.numero));
+          if (updated) {
+            state.currentConversation = updated;
+            openConversation(updated);
+          }
+        }
+      } catch (err) {
+        showToast(`Erro ao carregar histórico: ${err.message}`, 'error');
+      }
+    }
+
+    async function sendReply() {
+      if (!state.currentConversation) {
+        showToast('Selecione uma conversa.', 'error');
+        return;
+      }
+      const mensagem = $('replyBox').value.trim();
+      if (!mensagem) {
+        showToast('Digite uma mensagem.', 'error');
+        return;
+      }
+      try {
+        const payload = {
+          para: state.currentConversation.numero,
+          mensagem,
+          manager: state.managerName,
+          phoneNumberId: state.currentConversation.phone_number_id || state.phoneId || ''
+        };
+        await safeFetchJson(`${state.n8nUrl}/webhook/whatsapp-responder`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        $('replyBox').value = '';
+        showToast('Mensagem enviada.');
+        await loadHistory();
+      } catch (err) {
+        showToast(`Erro ao responder: ${err.message}`, 'error');
+      }
+    }
+
+    async function returnToBot() {
+      if (!state.currentConversation) {
+        showToast('Selecione uma conversa.', 'error');
+        return;
+      }
+      try {
+        await safeFetchJson(`${state.n8nUrl}/webhook/whatsapp-handoff`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            numero: state.currentConversation.numero,
+            modo: 'bot',
+            manager: state.managerName
+          })
+        });
+        showToast('Conversa devolvida ao bot.');
+        await loadHistory();
+      } catch (err) {
+        showToast(`Erro ao retornar ao bot: ${err.message}`, 'error');
+      }
+    }
+
+    function setMainTab(tab) {
+      state.currentMainTab = tab;
+      document.querySelectorAll('.main-tab').forEach(btn => btn.classList.toggle('active', btn.dataset.mainTab === tab));
+      const convMode = tab === 'conversas';
+      $('sidebarConversas').classList.toggle('hidden', !convMode);
+      $('sidebarKanban').classList.toggle('hidden', convMode);
+      $('chatView').style.display = convMode ? 'flex' : 'none';
+      $('kanbanView').classList.toggle('active', !convMode);
+    }
+
+    function setSubTab(tab) {
+      state.currentSubTab = tab;
+      document.querySelectorAll('.sub-tab').forEach(btn => btn.classList.toggle('active', btn.dataset.subTab === tab));
+      renderConversationList();
+    }
+
+    function escapeHtml(str) {
+      return String(str ?? '')
         .replace(/&/g, '&amp;')
         .replace(/</g, '&lt;')
         .replace(/>/g, '&gt;')
@@ -484,341 +814,39 @@
         .replace(/'/g, '&#039;');
     }
 
-    function formatDate(v) {
-      if (!v) return '';
-      const d = new Date(v);
-      if (Number.isNaN(d.getTime())) return String(v);
-      return d.toLocaleString('pt-BR', {
-        day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit'
-      });
+    function logout() {
+      clearInterval(state.poller);
+      $('app').classList.add('hidden');
+      $('login').classList.remove('hidden');
     }
 
-    function avatarLabel(name) {
-      return (name || '?').trim().slice(0, 2).toUpperCase();
-    }
-
-    function normalizeUrl(v) {
-      return String(v || '').trim().replace(/\/$/, '');
-    }
-
-    async function safeFetch(url, options = {}) {
-      const res = await fetch(url, options);
-      const text = await res.text();
-      let data = {};
-      try { data = text ? JSON.parse(text) : {}; } catch { data = { raw: text }; }
-      if (!res.ok) throw new Error(data.message || data.error || data.raw || `HTTP ${res.status}`);
-      return data;
-    }
-
-    function getMessagesArray(conv) {
-      const msgs = conv.mensagens || conv.messages || conv.ultimas_mensagens || conv.last_messages || [];
-      return Array.isArray(msgs) ? msgs.slice(-10) : [];
-    }
-
-    function normalizeMessage(msg = {}) {
-      const origem = msg.origem || msg.from_role || msg.role || msg.tipo || msg.source || 'cliente';
-      const texto = msg.texto || msg.body || msg.content || msg.mensagem || '[sem texto]';
-      const timestamp = msg.timestamp || msg.at || msg.created_at || msg.data || msg.time || null;
-      const manager = msg.manager || msg.gerente || '';
-      const isMe = ['manager', 'humano', 'bot', 'assistant', 'system'].includes(String(origem).toLowerCase());
-      return { origem, texto, timestamp, manager, isMe };
-    }
-
-    function normalizeConversation(conv = {}) {
-      const numero = String(conv.numero || conv.phone || conv.telefone || conv.wa_id || '').replace(/\D/g, '');
-      const nome = conv.nome || conv.name || numero || 'Sem nome';
-      const bucket = conv.crm_bucket || conv.bucket || conv.categoria || inferBucket(conv);
-      const etapa = conv.etapa_fechamento || conv.stage || conv.etapa || '';
-      const aguardando = Boolean(conv.aguardando_manager || conv.waiting_manager || conv.modo === 'humano' || etapa === 'aguardando_manager');
-      const humanInteracted = Boolean(conv.human_interacted || bucket === 'INTERAGIU_COM_HUMANO');
-      const linkSent = Boolean(conv.link_sent || bucket === 'ENVIOU_O_LINK');
-      const unread = Number(conv.unread_manager || conv.unread || 0);
-      const lastUpdated = conv.last_updated_at || conv.updated_at || conv.last_seen_at || conv.data || null;
-      const lastText = conv.ultima_texto || conv.last_text || conv.preview || getMessagesArray(conv).slice(-1)[0]?.texto || '';
-      const mode = conv.modo || (aguardando ? 'humano' : 'bot');
-      const managerResponsavel = conv.manager_responsavel || conv.manager || conv.gerente || '';
-      const phoneNumberId = conv.phone_number_id || conv.phoneNumberId || '';
-      return {
-        ...conv,
-        numero, nome, bucket, etapa, aguardando, humanInteracted, linkSent,
-        unread, lastUpdated, lastText, mode, managerResponsavel, phoneNumberId,
-        mensagensNorm: getMessagesArray(conv).map(normalizeMessage),
-      };
-    }
-
-    function inferBucket(conv = {}) {
-      if (conv.link_sent) return 'ENVIOU_O_LINK';
-      if (conv.human_interacted || conv.aguardando_manager || conv.modo === 'humano') return 'INTERAGIU_COM_HUMANO';
-      return 'INTERAGIU_COM_BOT';
-    }
-
-    function normalizePayload(data) {
-      const arrays = [];
-      if (Array.isArray(data)) arrays.push(...data);
-      if (Array.isArray(data.conversas)) arrays.push(...data.conversas);
-      if (Array.isArray(data.ultimas_conversas)) arrays.push(...data.ultimas_conversas);
-      if (Array.isArray(data.aguardando_manager)) arrays.push(...data.aguardando_manager);
-      if (Array.isArray(data.crm?.INTERAGIU_COM_BOT)) arrays.push(...data.crm.INTERAGIU_COM_BOT);
-      if (Array.isArray(data.crm?.INTERAGIU_COM_HUMANO)) arrays.push(...data.crm.INTERAGIU_COM_HUMANO);
-      if (Array.isArray(data.crm?.ENVIOU_O_LINK)) arrays.push(...data.crm.ENVIOU_O_LINK);
-
-      const byNumber = new Map();
-      arrays.map(normalizeConversation).forEach(conv => {
-        if (!conv.numero) return;
-        const prev = byNumber.get(conv.numero);
-        if (!prev) return void byNumber.set(conv.numero, conv);
-        const pick = (new Date(conv.lastUpdated || 0).getTime() >= new Date(prev.lastUpdated || 0).getTime()) ? conv : prev;
-        const mergedMsgs = [...(prev.mensagensNorm || []), ...(conv.mensagensNorm || [])]
-          .slice(-10);
-        byNumber.set(conv.numero, { ...prev, ...conv, ...pick, mensagensNorm: mergedMsgs });
-      });
-
-      return [...byNumber.values()].sort((a, b) => new Date(b.lastUpdated || 0) - new Date(a.lastUpdated || 0)).slice(0, 50);
-    }
-
-    function filteredConversations() {
-      const q = els.searchInput.value.trim().toLowerCase();
-      let list = [...state.allConversations];
-      if (state.activeTab === 'manager') list = list.filter(c => c.aguardando);
-      if (state.activeTab === 'bot') list = list.filter(c => c.bucket === 'INTERAGIU_COM_BOT');
-      if (state.activeTab === 'humano') list = list.filter(c => c.bucket === 'INTERAGIU_COM_HUMANO' || c.humanInteracted);
-      if (state.activeTab === 'link') list = list.filter(c => c.bucket === 'ENVIOU_O_LINK' || c.linkSent);
-      if (q) {
-        list = list.filter(c => [c.nome, c.numero, c.bucket, c.etapa, c.lastText, c.managerResponsavel].join(' ').toLowerCase().includes(q));
+    $('loginBtn').addEventListener('click', () => doConnect(true));
+    $('connectBtn').addEventListener('click', () => doConnect(false));
+    $('demoBtn').addEventListener('click', () => {
+      $('n8nUrl').value = 'https://wantcashtopcard.app.n8n.cloud';
+      $('managerName').value = 'Enzo Almeida Altoé';
+      $('phoneId').value = '1069703939552957';
+    });
+    $('refreshBtn').addEventListener('click', loadHistory);
+    $('refreshChatBtn').addEventListener('click', loadHistory);
+    $('logoutBtn').addEventListener('click', logout);
+    $('sendReplyBtn').addEventListener('click', sendReply);
+    $('returnBotBtn').addEventListener('click', returnToBot);
+    $('searchInput').addEventListener('input', (e) => {
+      state.searchTerm = e.target.value || '';
+      renderConversationList();
+    });
+    $('replyBox').addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        sendReply();
       }
-      return list;
-    }
+    });
+    document.querySelectorAll('.main-tab').forEach(btn => btn.addEventListener('click', () => setMainTab(btn.dataset.mainTab)));
+    document.querySelectorAll('.sub-tab').forEach(btn => btn.addEventListener('click', () => setSubTab(btn.dataset.subTab)));
 
-    function renderList() {
-      const list = filteredConversations();
-      if (!list.length) {
-        els.conversationList.innerHTML = '<div class="empty" style="height: 180px;">Nenhuma conversa encontrada.</div>';
-        return;
-      }
-      els.conversationList.innerHTML = list.map(conv => `
-        <div class="conversation-item ${state.selectedNumber === conv.numero ? 'active' : ''}" data-number="${conv.numero}">
-          <div class="avatar">${escapeHtml(avatarLabel(conv.nome))}</div>
-          <div>
-            <div class="conv-top">
-              <div class="conv-name">${escapeHtml(conv.nome)}</div>
-              <div class="conv-time">${escapeHtml(formatDate(conv.lastUpdated))}</div>
-            </div>
-            <div class="conv-last">${escapeHtml(conv.lastText || 'Sem mensagens')}</div>
-            <div class="chips">
-              <span class="chip">${escapeHtml(conv.bucket)}</span>
-              ${conv.etapa ? `<span class="chip">${escapeHtml(conv.etapa)}</span>` : ''}
-              ${conv.mode ? `<span class="chip">modo: ${escapeHtml(conv.mode)}</span>` : ''}
-            </div>
-          </div>
-          ${conv.unread ? `<div class="badge">${conv.unread}</div>` : '<div></div>'}
-        </div>
-      `).join('');
-
-      [...document.querySelectorAll('.conversation-item')].forEach(item => {
-        item.onclick = () => {
-          state.selectedNumber = item.dataset.number;
-          renderList();
-          renderChat();
-        };
-      });
-
-      if (!state.selectedNumber && list[0]) {
-        state.selectedNumber = list[0].numero;
-        renderList();
-        renderChat();
-      }
-    }
-
-    function renderChat() {
-      const conv = state.allConversations.find(c => c.numero === state.selectedNumber);
-      if (!conv) {
-        els.chatName.textContent = 'Selecione uma conversa';
-        els.chatSub.textContent = 'Nenhuma conversa carregada';
-        els.chatAvatar.textContent = '?';
-        els.messages.innerHTML = '<div class="empty">Selecione uma conversa para visualizar.</div>';
-        els.returnToBotBtn.classList.add('hide');
-        renderCurrentMeta(null);
-        return;
-      }
-      els.chatName.textContent = conv.nome;
-      els.chatSub.textContent = `${conv.numero} • ${conv.bucket}${conv.managerResponsavel ? ` • manager: ${conv.managerResponsavel}` : ''}`;
-      els.chatAvatar.textContent = avatarLabel(conv.nome);
-      els.returnToBotBtn.classList.remove('hide');
-      const msgs = conv.mensagensNorm || [];
-      if (!msgs.length) {
-        els.messages.innerHTML = '<div class="empty">Esta conversa ainda não possui mensagens no histórico.</div>';
-      } else {
-        els.messages.innerHTML = msgs.map(msg => `
-          <div class="message-row ${msg.isMe ? 'me' : ''}">
-            <div class="bubble">
-              <div>${escapeHtml(msg.texto)}</div>
-              <div class="meta">
-                ${msg.manager ? `<span>${escapeHtml(msg.manager)}</span>` : ''}
-                <span>${escapeHtml(msg.origem)}</span>
-                <span>${escapeHtml(formatDate(msg.timestamp))}</span>
-              </div>
-            </div>
-          </div>
-        `).join('');
-      }
-      els.messages.scrollTop = els.messages.scrollHeight;
-      renderCurrentMeta(conv);
-    }
-
-    function renderCurrentMeta(conv) {
-      if (!conv) {
-        els.currentMeta.innerHTML = '<div class="mini-item"><span>Status</span><span class="muted">-</span></div>';
-        return;
-      }
-      els.currentMeta.innerHTML = `
-        <div class="mini-item"><span>Número</span><span class="muted">${escapeHtml(conv.numero)}</span></div>
-        <div class="mini-item"><span>Bucket</span><span class="muted">${escapeHtml(conv.bucket)}</span></div>
-        <div class="mini-item"><span>Etapa</span><span class="muted">${escapeHtml(conv.etapa || '-')}</span></div>
-        <div class="mini-item"><span>Modo</span><span class="muted">${escapeHtml(conv.mode)}</span></div>
-        <div class="mini-item"><span>Manager</span><span class="muted">${escapeHtml(conv.managerResponsavel || '-')}</span></div>
-        <div class="mini-item"><span>Atualizado</span><span class="muted">${escapeHtml(formatDate(conv.lastUpdated))}</span></div>
-      `;
-    }
-
-    function renderInsights() {
-      const total = state.allConversations.length;
-      const manager = state.allConversations.filter(c => c.aguardando).length;
-      const bot = state.allConversations.filter(c => c.bucket === 'INTERAGIU_COM_BOT').length;
-      const humano = state.allConversations.filter(c => c.bucket === 'INTERAGIU_COM_HUMANO' || c.humanInteracted).length;
-      const link = state.allConversations.filter(c => c.bucket === 'ENVIOU_O_LINK' || c.linkSent).length;
-
-      els.statTotal.textContent = total;
-      els.statManager.textContent = manager;
-      els.statBot.textContent = bot;
-      els.statLink.textContent = link;
-
-      const pct = n => total ? Math.round((n / total) * 100) : 0;
-      els.barBot.style.width = pct(bot) + '%';
-      els.barHumano.style.width = pct(humano) + '%';
-      els.barLink.style.width = pct(link) + '%';
-
-      const topAttention = [...state.allConversations]
-        .filter(c => c.aguardando)
-        .sort((a,b) => new Date(b.lastUpdated || 0) - new Date(a.lastUpdated || 0))
-        .slice(0, 6);
-
-      els.attentionList.innerHTML = topAttention.length ? topAttention.map(c => `
-        <div class="mini-item">
-          <div>
-            <div><span class="status-dot"></span>${escapeHtml(c.nome)}</div>
-            <div class="tiny">${escapeHtml(c.numero)}</div>
-          </div>
-          <div class="tiny">${escapeHtml(formatDate(c.lastUpdated))}</div>
-        </div>
-      `).join('') : '<div class="tiny">Nenhuma conversa aguardando manager.</div>';
-    }
-
-    async function loadConversations() {
-      const base = normalizeUrl(state.n8nUrl);
-      if (!base) return;
-      const data = await safeFetch(`${base}/webhook/whatsapp-historico`);
-      state.lastPayload = data;
-      state.allConversations = normalizePayload(data);
-      renderList();
-      renderChat();
-      renderInsights();
-    }
-
-    async function sendManagerMessage() {
-      const conv = state.allConversations.find(c => c.numero === state.selectedNumber);
-      if (!conv) return toast('Selecione uma conversa.');
-      const mensagem = els.messageInput.value.trim();
-      if (!mensagem) return toast('Digite uma mensagem.');
-      if (!state.managerName.trim()) return toast('Informe o nome do manager.');
-      const base = normalizeUrl(state.n8nUrl);
-      try {
-        await safeFetch(`${base}/webhook/whatsapp-responder`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            para: conv.numero,
-            mensagem,
-            manager: state.managerName,
-            phoneNumberId: conv.phoneNumberId || ''
-          })
-        });
-        els.messageInput.value = '';
-        await loadConversations();
-      } catch (e) {
-        toast(`Erro ao enviar: ${e.message}`);
-      }
-    }
-
-    async function returnToBot() {
-      const conv = state.allConversations.find(c => c.numero === state.selectedNumber);
-      if (!conv) return toast('Selecione uma conversa.');
-      const base = normalizeUrl(state.n8nUrl);
-      try {
-        await safeFetch(`${base}/webhook/whatsapp-handoff`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            numero: conv.numero,
-            modo: 'bot',
-            manager: state.managerName || 'Manager'
-          })
-        });
-        await loadConversations();
-      } catch (e) {
-        toast(`Erro ao retornar ao bot: ${e.message}`);
-      }
-    }
-
-    function saveConfig() {
-      state.n8nUrl = normalizeUrl(els.n8nUrl.value);
-      state.managerName = els.managerName.value.trim();
-      localStorage.setItem('crm_n8n_url', state.n8nUrl);
-      localStorage.setItem('crm_manager_name', state.managerName);
-      loadConversations().catch(err => toast(`Erro ao conectar: ${err.message}`));
-      startPolling();
-    }
-
-    function startPolling() {
-      if (state.polling) clearInterval(state.polling);
-      state.polling = setInterval(() => {
-        if (!state.n8nUrl) return;
-        loadConversations().catch(() => {});
-      }, 5000);
-    }
-
-    function bindEvents() {
-      els.saveConfigBtn.onclick = saveConfig;
-      els.sendBtn.onclick = sendManagerMessage;
-      els.returnToBotBtn.onclick = returnToBot;
-      els.refreshBtn.onclick = () => loadConversations().catch(err => toast(`Erro ao atualizar: ${err.message}`));
-      els.searchInput.oninput = renderList;
-      els.messageInput.addEventListener('keydown', e => {
-        if (e.key === 'Enter' && !e.shiftKey) {
-          e.preventDefault();
-          sendManagerMessage();
-        }
-      });
-      els.tabs.forEach(tab => {
-        tab.onclick = () => {
-          els.tabs.forEach(t => t.classList.remove('active'));
-          tab.classList.add('active');
-          state.activeTab = tab.dataset.tab;
-          renderList();
-        };
-      });
-    }
-
-    function init() {
-      els.n8nUrl.value = state.n8nUrl;
-      els.managerName.value = state.managerName;
-      bindEvents();
-      if (state.n8nUrl) {
-        loadConversations().catch(() => {});
-        startPolling();
-      }
-    }
-
-    init();
+    loadPrefs();
+    fillInputs();
   </script>
 </body>
 </html>
