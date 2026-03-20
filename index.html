@@ -1,852 +1,1057 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Painel Manager WantCash</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <style>
-    :root{
-      --bg:#0b141a;
-      --panel:#111b21;
-      --panel-2:#202c33;
-      --panel-3:#182229;
-      --line:#23343d;
-      --muted:#8fa3ad;
-      --text:#e9edef;
-      --accent:#25d366;
-      --accent-2:#00a884;
-      --danger:#ef4444;
-      --chip:#132028;
-      --out:#005c4b;
-      --in:#202c33;
-      --shadow:0 10px 30px rgba(0,0,0,.25);
-      --radius:18px;
-    }
-    *{box-sizing:border-box}
-    html,body{height:100%}
-    body{
-      margin:0;
-      font-family:Inter,system-ui,sans-serif;
-      background:linear-gradient(180deg,#0a1318,#0d171d);
-      color:var(--text);
-      overflow:hidden;
-    }
-    button,input,textarea{font:inherit}
-    .hidden{display:none !important}
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>WantCash CRM Manager</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --black:#0a0a0a;
+  --dark:#111111;
+  --dark2:#1a1a1a;
+  --dark3:#222222;
+  --dark4:#2c2c2c;
+  --border:#333333;
+  --border2:#2a2a2a;
+  --gold:#f0c226;
+  --gold2:#e0b020;
+  --gold3:#c89a10;
+  --gold-glow:rgba(240,194,38,.18);
+  --gold-faint:rgba(240,194,38,.08);
+  --text:#f0ece0;
+  --text2:#b8b4a8;
+  --text3:#7a7670;
+  --danger:#e05050;
+  --success:#44cc88;
+  --info:#44aadd;
+  --radius:14px;
+  --radius-sm:8px;
+  --shadow:0 8px 32px rgba(0,0,0,.6);
+  --shadow-gold:0 4px 20px rgba(240,194,38,.2);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden}
+body{font-family:'DM Sans',sans-serif;background:var(--black);color:var(--text);font-size:14px}
+h1,h2,h3,h4,h5{font-family:'Syne',sans-serif;font-weight:700}
+button,input,textarea,select{font-family:'DM Sans',sans-serif;font-size:14px}
+.hidden{display:none!important}
+::-webkit-scrollbar{width:4px;height:4px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:#333;border-radius:4px}
+a{color:var(--gold);text-decoration:none}
 
-    .login{
-      height:100%;
-      display:grid;
-      place-items:center;
-      padding:24px;
-      background:radial-gradient(circle at top left,#0f2c24 0%,transparent 28%), linear-gradient(180deg,#0b141a,#101920);
-    }
-    .login-card{
-      width:min(520px,100%);
-      background:rgba(17,27,33,.94);
-      border:1px solid rgba(255,255,255,.06);
-      border-radius:28px;
-      box-shadow:var(--shadow);
-      padding:28px;
-      display:flex;
-      flex-direction:column;
-      gap:18px;
-    }
-    .brand{
-      display:flex;
-      align-items:center;
-      gap:14px;
-    }
-    .brand-badge{
-      width:56px;height:56px;border-radius:18px;
-      background:linear-gradient(135deg,var(--accent),var(--accent-2));
-      display:grid;place-items:center;font-size:24px;font-weight:700;color:white;
-      box-shadow:0 8px 20px rgba(37,211,102,.25);
-    }
-    .brand h1{font-size:28px;margin:0}
-    .brand p{margin:4px 0 0;color:var(--muted)}
-    .fields{display:grid;gap:12px}
-    .field{display:grid;gap:8px}
-    .field label{font-size:13px;color:#b7c7ce;font-weight:600}
-    .field input{
-      width:100%;padding:14px 16px;border-radius:14px;border:1px solid #2a3b45;
-      background:#0f1b22;color:var(--text);outline:none;
-    }
-    .field input:focus{border-color:var(--accent-2)}
-    .login-actions{display:flex;gap:12px;flex-wrap:wrap}
-    .btn{
-      border:none;border-radius:14px;padding:14px 18px;cursor:pointer;font-weight:700;
-      transition:.18s transform,.18s opacity,.18s background;
-    }
-    .btn:hover{transform:translateY(-1px)}
-    .btn-primary{background:linear-gradient(135deg,var(--accent),var(--accent-2));color:white}
-    .btn-secondary{background:#1a2a33;color:#d7e1e5;border:1px solid #2a3b45}
-    .tip{font-size:13px;color:var(--muted);line-height:1.5}
-    .error{color:#fca5a5;font-size:13px;display:none}
+/* ── LOGIN ── */
+.login{height:100%;display:grid;place-items:center;background:radial-gradient(ellipse at 20% 20%,rgba(240,194,38,.06) 0%,transparent 60%),var(--black)}
+.login-card{width:min(480px,100%);padding:24px;background:var(--dark);border:1px solid var(--border);border-radius:24px;box-shadow:var(--shadow);display:flex;flex-direction:column;gap:20px}
+.brand-row{display:flex;align-items:center;gap:14px}
+.brand-logo{font-family:'Syne',sans-serif;font-size:26px;font-weight:800;line-height:1}
+.brand-logo .want{color:var(--text)}
+.brand-logo .cash{color:var(--gold)}
+.brand-logo .arrow{color:var(--gold);font-size:20px}
+.brand-sub{font-size:12px;color:var(--text3);margin-top:4px}
+.login-fields{display:grid;gap:12px}
+.lf label{display:block;font-size:12px;font-weight:600;color:var(--text2);margin-bottom:6px;text-transform:uppercase;letter-spacing:.06em}
+.lf input{width:100%;padding:12px 14px;background:var(--dark2);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text);outline:none;transition:.15s}
+.lf input:focus{border-color:var(--gold);box-shadow:0 0 0 3px var(--gold-faint)}
+.login-actions{display:flex;gap:10px}
+.btn{border:none;cursor:pointer;border-radius:var(--radius-sm);padding:11px 18px;font-weight:600;transition:.15s transform,.15s opacity}
+.btn:hover{transform:translateY(-1px)}
+.btn:active{transform:translateY(0)}
+.btn-gold{background:var(--gold);color:var(--black);font-family:'Syne',sans-serif;font-weight:700}
+.btn-gold:hover{background:var(--gold2);box-shadow:var(--shadow-gold)}
+.btn-dim{background:var(--dark3);color:var(--text2);border:1px solid var(--border)}
+.btn-dim:hover{border-color:var(--gold);color:var(--gold)}
+.btn-danger{background:var(--danger);color:#fff}
+.btn-sm{padding:7px 12px;font-size:13px}
+.login-tip{font-size:12px;color:var(--text3);line-height:1.6}
+.login-error{font-size:13px;color:#fca5a5;display:none}
 
-    .app{display:flex;height:100%}
-    .sidebar{
-      width:380px;min-width:380px;background:var(--panel);border-right:1px solid var(--line);
-      display:flex;flex-direction:column;
-    }
-    .sidebar-header{
-      padding:18px 18px 14px;border-bottom:1px solid var(--line);
-      display:grid;gap:14px;background:rgba(17,27,33,.95)
-    }
-    .sidebar-title{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
-    .sidebar-title h2{margin:0;font-size:20px}
-    .sidebar-title p{margin:5px 0 0;color:var(--muted);font-size:13px}
-    .header-actions{display:flex;gap:8px}
-    .icon-btn{
-      width:42px;height:42px;border-radius:12px;border:1px solid #2b3c46;background:#142028;color:#d3dde2;cursor:pointer;
-    }
-    .connect-row{display:grid;grid-template-columns:1.3fr 1fr auto;gap:10px}
-    .connect-row input{
-      min-width:0;padding:12px 14px;border-radius:12px;border:1px solid #2a3b45;background:#0f1b22;color:var(--text);outline:none;
-    }
-    .connect-row .btn{padding:12px 16px;border-radius:12px}
-    .search{padding:0 18px 16px;border-bottom:1px solid var(--line)}
-    .search input{
-      width:100%;padding:13px 15px;border-radius:14px;border:1px solid #2a3b45;background:#0f1b22;color:var(--text);outline:none;
-    }
-    .tabs-top{display:flex;gap:8px;padding:14px 18px 10px;overflow:auto}
-    .main-tab,.sub-tab{
-      border:none;cursor:pointer;white-space:nowrap;border-radius:999px;padding:11px 16px;font-weight:600;
-      background:#132028;color:#9fb0b9;
-    }
-    .main-tab.active,.sub-tab.active{background:#123829;color:white;box-shadow:inset 0 0 0 1px rgba(37,211,102,.18)}
-    .sub-tabs{display:flex;gap:8px;padding:0 18px 14px;overflow:auto;border-bottom:1px solid var(--line)}
-    .list{flex:1;overflow:auto}
-    .conv-item{
-      display:grid;grid-template-columns:56px 1fr auto;gap:12px;padding:14px 18px;cursor:pointer;border-bottom:1px solid rgba(255,255,255,.04)
-    }
-    .conv-item:hover,.conv-item.active{background:#162229}
-    .avatar{
-      width:56px;height:56px;border-radius:50%;background:#22333c;color:#dce7eb;display:grid;place-items:center;font-weight:700;font-size:20px
-    }
-    .conv-main{min-width:0;display:grid;gap:6px}
-    .row-between{display:flex;justify-content:space-between;gap:10px;align-items:center}
-    .name{font-size:16px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-    .preview{font-size:13px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-    .time{font-size:12px;color:var(--muted)}
-    .chips{display:flex;gap:8px;flex-wrap:wrap}
-    .chip{padding:6px 10px;border-radius:999px;font-size:11px;background:#16252d;color:#cfe0e6;border:1px solid rgba(255,255,255,.05)}
-    .chip.green{background:#123829;color:#c8ffe3}
-    .chip.yellow{background:#3a3314;color:#f8efb2}
-    .chip.red{background:#3c1f24;color:#fecaca}
-    .empty-list{padding:30px 22px;color:var(--muted);line-height:1.6;text-align:center}
+/* ── APP LAYOUT ── */
+.app{display:flex;height:100%}
 
-    .main{
-      flex:1;display:flex;flex-direction:column;min-width:0;background:var(--bg)
-    }
-    .topbar{
-      height:72px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 18px;background:rgba(11,20,26,.92)
-    }
-    .topbar-left{display:flex;gap:10px;align-items:center}
-    .topbar h3{margin:0;font-size:18px}
-    .topbar p{margin:4px 0 0;color:var(--muted);font-size:13px}
-    .workspace{flex:1;display:flex;min-height:0}
-    .chat-wrap{flex:1;display:flex;flex-direction:column;min-width:0}
-    .chat-header{
-      padding:16px 18px;border-bottom:1px solid rgba(255,255,255,.05);display:flex;justify-content:space-between;gap:16px;align-items:center;background:rgba(11,20,26,.88)
-    }
-    .chat-contact{display:flex;gap:14px;align-items:center;min-width:0}
-    .chat-contact h4{margin:0;font-size:18px}
-    .chat-contact p{margin:5px 0 0;color:var(--muted);font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-    .chat-actions{display:flex;gap:10px;flex-wrap:wrap}
-    .chat-actions .btn{padding:12px 16px}
-    .messages{
-      flex:1;overflow:auto;padding:24px min(7vw,72px);display:flex;flex-direction:column;gap:10px;
-      background:
-        radial-gradient(rgba(255,255,255,.02) 1px, transparent 1px),
-        linear-gradient(180deg, rgba(18,28,34,.35), rgba(9,16,21,.35));
-      background-size:18px 18px, auto;
-    }
-    .msg-row{display:flex}
-    .msg-row.in{justify-content:flex-start}
-    .msg-row.out{justify-content:flex-end}
-    .bubble{
-      max-width:min(72%,740px);padding:10px 12px 7px;border-radius:14px;line-height:1.45;box-shadow:0 6px 16px rgba(0,0,0,.12)
-    }
-    .msg-row.in .bubble{background:var(--in);border-top-left-radius:4px}
-    .msg-row.out .bubble{background:var(--out);border-top-right-radius:4px}
-    .sender{font-size:12px;font-weight:700;color:#86efac;margin-bottom:5px}
-    .meta{display:flex;gap:8px;justify-content:flex-end;margin-top:6px;font-size:11px;color:#b6c5cc}
-    .composer{
-      border-top:1px solid var(--line);padding:14px 16px;background:#182229;display:flex;gap:12px;align-items:flex-end
-    }
-    .composer textarea{
-      flex:1;min-height:56px;max-height:140px;resize:vertical;border:none;outline:none;border-radius:16px;
-      background:#0f1b22;color:var(--text);padding:14px 16px
-    }
-    .composer .btn{padding:14px 18px;border-radius:16px}
-    .empty-chat{flex:1;display:grid;place-items:center;color:var(--muted);text-align:center;padding:40px}
-    .empty-chat .icon{font-size:64px;margin-bottom:12px;opacity:.7}
+/* ── SIDEBAR ── */
+.sidebar{width:340px;min-width:340px;background:var(--dark);border-right:1px solid var(--border2);display:flex;flex-direction:column;height:100%}
+.sidebar-top{padding:14px 14px 0;border-bottom:1px solid var(--border2)}
+.sidebar-brand{display:flex;justify-content:space-between;align-items:center;padding-bottom:12px}
+.sb-logo{font-family:'Syne',sans-serif;font-size:18px;font-weight:800}
+.sb-logo .want{color:var(--text)}
+.sb-logo .cash{color:var(--gold)}
+.sb-logo .dollar{color:var(--gold)}
+.sb-actions{display:flex;gap:6px}
+.icon-btn{width:34px;height:34px;border-radius:8px;border:1px solid var(--border);background:var(--dark2);color:var(--text2);cursor:pointer;display:grid;place-items:center;font-size:16px;transition:.15s}
+.icon-btn:hover{border-color:var(--gold);color:var(--gold)}
+.sidebar-conn{display:grid;gap:8px;padding-bottom:12px}
+.conn-row{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.conn-row input,.sidebar-conn input{width:100%;padding:9px 12px;background:var(--dark2);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text);outline:none}
+.conn-row input:focus,.sidebar-conn input:focus{border-color:var(--gold)}
+.sidebar-search{padding:10px 14px;border-bottom:1px solid var(--border2)}
+.sidebar-search input{width:100%;padding:9px 12px 9px 36px;background:var(--dark2);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text);outline:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%237a7670' stroke-width='2'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='m21 21-4.35-4.35'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:12px center}
+.sidebar-search input:focus{border-color:var(--gold)}
+.nav-tabs{display:flex;gap:4px;padding:10px 14px 0;overflow-x:auto}
+.nav-tab{border:none;cursor:pointer;background:transparent;color:var(--text3);padding:8px 12px;border-radius:var(--radius-sm) var(--radius-sm) 0 0;font-weight:600;font-size:13px;white-space:nowrap;border-bottom:2px solid transparent;transition:.15s;font-family:'Syne',sans-serif}
+.nav-tab:hover{color:var(--text)}
+.nav-tab.active{color:var(--gold);border-bottom-color:var(--gold)}
+.sub-tabs{display:flex;gap:4px;padding:8px 14px;overflow-x:auto;border-bottom:1px solid var(--border2);background:var(--dark)}
+.sub-tab{border:none;cursor:pointer;background:var(--dark2);color:var(--text3);padding:6px 10px;border-radius:20px;font-size:12px;font-weight:600;white-space:nowrap;transition:.15s}
+.sub-tab:hover{color:var(--text)}
+.sub-tab.active{background:var(--gold-faint);color:var(--gold);border:1px solid rgba(240,194,38,.3)}
+.list{flex:1;overflow-y:auto}
 
-    .insights{
-      width:360px;min-width:360px;border-left:1px solid var(--line);background:linear-gradient(180deg,#0f1b22,#0d171d);overflow:auto
-    }
-    .insights .section{padding:18px;border-bottom:1px solid rgba(255,255,255,.05)}
-    .insights h3,.insights h4{margin:0 0 14px}
-    .stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-    .stat{
-      background:#16232b;border:1px solid rgba(255,255,255,.05);padding:16px;border-radius:18px
-    }
-    .stat .label{font-size:13px;color:var(--muted)}
-    .stat .value{font-size:36px;font-weight:800;margin-top:8px}
-    .progress-list{display:grid;gap:12px}
-    .progress .label{display:flex;justify-content:space-between;margin-bottom:7px;font-size:13px;color:#dbe4e8}
-    .bar{height:10px;background:#16232b;border-radius:999px;overflow:hidden}
-    .bar > span{display:block;height:100%;background:linear-gradient(90deg,var(--accent),var(--accent-2));border-radius:999px}
-    .queue{display:grid;gap:10px}
-    .queue-item{background:#16232b;padding:12px;border-radius:14px;border:1px solid rgba(255,255,255,.04)}
-    .muted{color:var(--muted)}
+/* ── CONV ITEM ── */
+.conv-item{display:grid;grid-template-columns:46px 1fr;gap:10px;padding:11px 14px;cursor:pointer;border-bottom:1px solid rgba(255,255,255,.03);transition:.12s}
+.conv-item:hover{background:rgba(255,255,255,.03)}
+.conv-item.active{background:var(--gold-faint);border-left:2px solid var(--gold)}
+.avatar{width:46px;height:46px;border-radius:50%;background:var(--dark3);color:var(--text2);display:grid;place-items:center;font-family:'Syne',sans-serif;font-weight:700;font-size:17px;flex-shrink:0}
+.conv-info{min-width:0}
+.conv-header{display:flex;justify-content:space-between;gap:6px;align-items:center;margin-bottom:3px}
+.conv-name{font-weight:600;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.conv-time{font-size:11px;color:var(--text3);white-space:nowrap}
+.conv-preview{font-size:12px;color:var(--text3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:5px}
+.conv-chips{display:flex;gap:4px;flex-wrap:wrap}
+.chip{padding:2px 8px;border-radius:20px;font-size:11px;background:var(--dark3);color:var(--text3);border:1px solid var(--border)}
+.chip.gold{background:rgba(240,194,38,.12);color:var(--gold);border-color:rgba(240,194,38,.25)}
+.chip.red{background:rgba(224,80,80,.12);color:#fca5a5;border-color:rgba(224,80,80,.25)}
+.chip.green{background:rgba(68,204,136,.12);color:#86efac;border-color:rgba(68,204,136,.25)}
+.chip.blue{background:rgba(68,170,221,.12);color:#93c5fd;border-color:rgba(68,170,221,.25)}
+.bot-toggle{padding:2px 8px;border-radius:20px;font-size:11px;font-weight:700;cursor:pointer;border:none;transition:.15s}
+.bot-on{background:rgba(68,204,136,.15);color:#86efac;border:1px solid rgba(68,204,136,.3)}
+.bot-off{background:rgba(224,80,80,.12);color:#fca5a5;border:1px solid rgba(224,80,80,.25)}
+.empty-list{padding:30px 20px;color:var(--text3);text-align:center;line-height:1.7}
 
-    .kanban-view{display:none;flex:1;min-height:0;padding:18px;overflow:auto;background:linear-gradient(180deg,#0b141a,#0d171d)}
-    .kanban-view.active{display:block}
-    .kanban-grid{display:grid;grid-template-columns:repeat(4,minmax(270px,1fr));gap:16px;min-width:1160px}
-    .column{background:#101b22;border:1px solid rgba(255,255,255,.05);border-radius:22px;display:flex;flex-direction:column;min-height:calc(100vh - 140px)}
-    .column-head{padding:16px 16px 12px;border-bottom:1px solid rgba(255,255,255,.05);display:flex;justify-content:space-between;gap:10px;align-items:center}
-    .column-head h4{margin:0;font-size:15px}
-    .count{background:#16252d;border-radius:999px;padding:6px 10px;font-size:12px;color:#dce7eb}
-    .cards{padding:14px;display:grid;gap:12px;align-content:start}
-    .card{
-      background:#16232b;border:1px solid rgba(255,255,255,.05);border-radius:18px;padding:14px;cursor:pointer;transition:.18s transform,.18s border-color,.18s background
-    }
-    .card:hover{transform:translateY(-1px);border-color:rgba(37,211,102,.25);background:#182730}
-    .card h5{margin:0 0 6px;font-size:15px}
-    .card p{margin:0 0 12px;color:var(--muted);font-size:13px;line-height:1.45}
-    .card .mini{display:flex;justify-content:space-between;gap:8px;font-size:12px;color:#c7d6dc}
+/* ── MAIN ── */
+.main{flex:1;display:flex;flex-direction:column;min-width:0;background:var(--black)}
 
-    .toast{
-      position:fixed;right:20px;bottom:20px;background:#142028;color:#e9edef;border:1px solid #2b3c46;
-      border-radius:14px;padding:14px 16px;box-shadow:var(--shadow);opacity:0;transform:translateY(16px);transition:.22s;pointer-events:none;z-index:999
-    }
-    .toast.show{opacity:1;transform:translateY(0)}
-    .toast.success{border-color:rgba(37,211,102,.35)}
-    .toast.error{border-color:rgba(239,68,68,.35)}
+/* ── TOP BAR ── */
+.topbar{height:56px;display:flex;align-items:center;justify-content:space-between;padding:0 18px;border-bottom:1px solid var(--border2);background:var(--dark);flex-shrink:0}
+.topbar-left{display:flex;gap:10px;align-items:center}
+.topbar-info h3{font-size:15px;margin:0;font-family:'Syne',sans-serif}
+.topbar-info p{font-size:12px;color:var(--text3);margin-top:2px}
+.topbar-actions{display:flex;gap:8px;align-items:center}
 
-    @media (max-width: 1300px){
-      .insights{display:none}
-    }
-    @media (max-width: 980px){
-      .sidebar{width:100%;min-width:0}
-      .main{display:none}
-      .app.mobile-chat .sidebar{display:none}
-      .app.mobile-chat .main{display:flex}
-      .connect-row{grid-template-columns:1fr}
-    }
-  </style>
+/* ── WORKSPACE ── */
+.workspace{flex:1;display:flex;min-height:0;overflow:hidden}
+
+/* ── CHAT VIEW ── */
+.chat-wrap{flex:1;display:flex;flex-direction:column;min-width:0}
+.chat-header{padding:12px 16px;border-bottom:1px solid var(--border2);display:flex;justify-content:space-between;gap:12px;align-items:center;background:var(--dark);flex-shrink:0}
+.chat-left{display:flex;gap:12px;align-items:center;min-width:0}
+.chat-left h4{font-size:15px;font-family:'Syne',sans-serif;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.chat-left p{font-size:12px;color:var(--text3);margin-top:2px}
+.chat-right{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.messages{flex:1;overflow-y:auto;padding:20px 40px;display:flex;flex-direction:column;gap:8px;background:var(--black)}
+.msg-row{display:flex;gap:8px}
+.msg-row.in{justify-content:flex-start}
+.msg-row.out{justify-content:flex-end}
+.bubble{max-width:min(68%,600px);padding:9px 12px 6px;border-radius:12px;line-height:1.5;word-break:break-word}
+.msg-row.in .bubble{background:var(--dark2);border-top-left-radius:3px}
+.msg-row.out .bubble{background:#1a3020;border-top-right-radius:3px}
+.sender-label{font-size:11px;font-weight:700;color:var(--gold);margin-bottom:4px;font-family:'Syne',sans-serif}
+.msg-text{font-size:14px;line-height:1.5}
+.msg-meta{display:flex;gap:6px;justify-content:flex-end;margin-top:4px;font-size:11px;color:var(--text3)}
+.msg-audio{display:flex;align-items:center;gap:10px;background:var(--dark3);border-radius:8px;padding:8px 12px;min-width:200px}
+.audio-btn{width:32px;height:32px;border-radius:50%;background:var(--gold);border:none;cursor:pointer;display:grid;place-items:center;color:var(--black);flex-shrink:0}
+.audio-bar{flex:1;height:4px;background:var(--border);border-radius:4px}
+.audio-bar-fill{height:100%;background:var(--gold);border-radius:4px;width:0%}
+.msg-img{max-width:240px;border-radius:8px;cursor:pointer}
+.empty-chat{flex:1;display:grid;place-items:center;color:var(--text3);text-align:center}
+.empty-icon{font-size:48px;margin-bottom:12px;opacity:.5}
+
+/* ── COMPOSER ── */
+.composer{border-top:1px solid var(--border2);padding:10px 14px;background:var(--dark2);display:flex;flex-direction:column;gap:8px;flex-shrink:0}
+.composer-toolbar{display:flex;gap:6px;align-items:center}
+.composer-main{display:flex;gap:8px;align-items:flex-end}
+.composer textarea{flex:1;min-height:42px;max-height:120px;resize:vertical;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--dark3);color:var(--text);padding:10px 13px;outline:none;line-height:1.5}
+.composer textarea:focus{border-color:var(--gold)}
+.attach-btn{width:36px;height:36px;border-radius:8px;border:1px solid var(--border);background:var(--dark3);color:var(--text2);cursor:pointer;display:grid;place-items:center;transition:.15s}
+.attach-btn:hover{border-color:var(--gold);color:var(--gold)}
+.record-btn{width:36px;height:36px;border-radius:50%;border:none;background:var(--dark3);color:var(--text2);cursor:pointer;display:grid;place-items:center;border:1px solid var(--border);transition:.15s}
+.record-btn:hover{background:var(--danger);color:#fff;border-color:var(--danger)}
+.record-btn.recording{background:var(--danger);color:#fff;animation:pulse 1s infinite}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(224,80,80,.4)}50%{box-shadow:0 0 0 8px rgba(224,80,80,0)}}
+.file-input{display:none}
+
+/* ── RIGHT PANEL ── */
+.right-panel{width:300px;min-width:300px;border-left:1px solid var(--border2);background:var(--dark);display:flex;flex-direction:column;overflow:hidden}
+.rp-tabs{display:flex;border-bottom:1px solid var(--border2)}
+.rp-tab{flex:1;border:none;background:transparent;color:var(--text3);padding:12px 8px;font-size:12px;font-weight:600;cursor:pointer;border-bottom:2px solid transparent;transition:.15s;font-family:'Syne',sans-serif}
+.rp-tab.active{color:var(--gold);border-bottom-color:var(--gold)}
+.rp-body{flex:1;overflow-y:auto;padding:14px}
+.info-row{margin-bottom:10px}
+.info-label{font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--text3);margin-bottom:3px;font-weight:600}
+.info-val{font-size:14px;color:var(--text)}
+.section-title{font-family:'Syne',sans-serif;font-size:13px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--border2)}
+.stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px}
+.stat-card{background:var(--dark2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px}
+.stat-label{font-size:11px;color:var(--text3)}
+.stat-val{font-size:28px;font-family:'Syne',sans-serif;font-weight:800;color:var(--gold);margin-top:4px}
+.prog-item{margin-bottom:10px}
+.prog-label{display:flex;justify-content:space-between;font-size:12px;color:var(--text2);margin-bottom:5px}
+.prog-bar{height:6px;background:var(--dark3);border-radius:4px;overflow:hidden}
+.prog-fill{height:100%;background:linear-gradient(90deg,var(--gold3),var(--gold));border-radius:4px;transition:.4s width}
+.queue-item{background:var(--dark2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px;margin-bottom:8px}
+.queue-name{font-weight:600;font-size:13px}
+.queue-num{font-size:12px;color:var(--text3)}
+
+/* ── KANBAN ── */
+.kanban-panel{display:flex;flex-direction:column;flex:1;min-height:0;overflow:hidden}
+.kanban-toolbar{display:flex;align-items:center;gap:10px;padding:12px 16px;border-bottom:1px solid var(--border2);background:var(--dark);flex-shrink:0}
+.kanban-toolbar h3{font-family:'Syne',sans-serif;font-size:15px;flex:1}
+.kanban-board{flex:1;display:flex;gap:14px;padding:16px;overflow-x:auto;align-items:flex-start}
+.kb-col{min-width:260px;max-width:280px;background:var(--dark);border:1px solid var(--border2);border-radius:16px;display:flex;flex-direction:column;max-height:100%}
+.kb-col-head{padding:12px 14px;border-bottom:1px solid var(--border2);display:flex;justify-content:space-between;align-items:center}
+.kb-col-title{font-family:'Syne',sans-serif;font-size:13px;font-weight:700;display:flex;align-items:center;gap:8px}
+.kb-col-title input{background:transparent;border:none;color:inherit;font-family:'Syne',sans-serif;font-size:13px;font-weight:700;outline:none;width:100%;cursor:text}
+.kb-col-title input:focus{border-bottom:1px solid var(--gold)}
+.kb-count{background:var(--dark3);border-radius:20px;padding:2px 8px;font-size:11px;color:var(--text3)}
+.kb-col-actions{display:flex;gap:4px}
+.kb-cards{padding:10px;display:flex;flex-direction:column;gap:8px;overflow-y:auto;flex:1}
+.kb-card{background:var(--dark2);border:1px solid var(--border);border-radius:10px;padding:12px;cursor:pointer;transition:.15s;position:relative}
+.kb-card:hover{border-color:rgba(240,194,38,.3);background:var(--dark3)}
+.kb-card h5{font-family:'Syne',sans-serif;font-size:13px;font-weight:700;margin-bottom:4px}
+.kb-card p{font-size:12px;color:var(--text3);line-height:1.4;margin-bottom:8px}
+.kb-card-meta{display:flex;justify-content:space-between;font-size:11px;color:var(--text3)}
+.kb-card-btns{display:flex;gap:4px;margin-top:8px}
+.kb-move-btn{border:none;cursor:pointer;background:var(--dark3);color:var(--text2);border-radius:6px;padding:4px 8px;font-size:11px;transition:.15s}
+.kb-move-btn:hover{background:var(--gold);color:var(--black)}
+.add-col-btn{min-width:220px;border:2px dashed var(--border);border-radius:16px;background:transparent;color:var(--text3);cursor:pointer;padding:20px;font-size:13px;font-family:'Syne',sans-serif;font-weight:600;transition:.15s;display:flex;align-items:center;justify-content:center;gap:8px;align-self:flex-start}
+.add-col-btn:hover{border-color:var(--gold);color:var(--gold)}
+
+/* ── DASHBOARD ── */
+.dashboard-panel{flex:1;display:flex;flex-direction:column;overflow:hidden}
+.dash-toolbar{display:flex;align-items:center;gap:10px;padding:12px 16px;border-bottom:1px solid var(--border2);background:var(--dark);flex-shrink:0}
+.dash-toolbar h3{font-family:'Syne',sans-serif;font-size:15px;flex:1}
+.dash-body{flex:1;overflow-y:auto;padding:20px}
+.dash-stats{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px;margin-bottom:24px}
+.dash-stat{background:var(--dark);border:1px solid var(--border);border-radius:16px;padding:20px;position:relative;overflow:hidden}
+.dash-stat::before{content:'';position:absolute;top:-30px;right:-30px;width:80px;height:80px;border-radius:50%;background:var(--gold-faint)}
+.ds-label{font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--text3);margin-bottom:8px;font-weight:600}
+.ds-val{font-family:'Syne',sans-serif;font-size:36px;font-weight:800;color:var(--gold)}
+.ds-sub{font-size:12px;color:var(--text3);margin-top:4px}
+.sales-table{background:var(--dark);border:1px solid var(--border);border-radius:16px;overflow:hidden}
+.sales-table-head{padding:14px 18px;border-bottom:1px solid var(--border2);display:flex;justify-content:space-between;align-items:center}
+.sales-table-head h4{font-family:'Syne',sans-serif;font-size:14px}
+table{width:100%;border-collapse:collapse}
+th{text-align:left;padding:10px 16px;font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--text3);font-weight:600;border-bottom:1px solid var(--border2)}
+td{padding:12px 16px;border-bottom:1px solid rgba(255,255,255,.03);font-size:13px}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:rgba(255,255,255,.02)}
+
+/* ── KNOWLEDGE PANEL ── */
+.knowledge-panel{flex:1;display:flex;flex-direction:column;overflow:hidden}
+.know-toolbar{display:flex;align-items:center;gap:10px;padding:12px 16px;border-bottom:1px solid var(--border2);background:var(--dark);flex-shrink:0}
+.know-toolbar h3{font-family:'Syne',sans-serif;font-size:15px;flex:1}
+.know-body{flex:1;overflow-y:auto;padding:20px}
+.know-card{background:var(--dark);border:1px solid var(--border);border-radius:14px;margin-bottom:14px}
+.know-card-head{padding:14px 18px;cursor:pointer;display:flex;justify-content:space-between;align-items:center}
+.know-card-head h4{font-family:'Syne',sans-serif;font-size:14px}
+.know-card-body{padding:0 18px 14px;color:var(--text2);line-height:1.7;font-size:13px}
+
+/* ── LABELS MANAGER ── */
+.labels-panel{flex:1;display:flex;flex-direction:column;overflow:hidden}
+.labels-toolbar{display:flex;align-items:center;gap:10px;padding:12px 16px;border-bottom:1px solid var(--border2);background:var(--dark);flex-shrink:0}
+.labels-toolbar h3{font-family:'Syne',sans-serif;font-size:15px;flex:1}
+.labels-body{flex:1;overflow-y:auto;padding:20px}
+.label-group{background:var(--dark);border:1px solid var(--border);border-radius:14px;margin-bottom:16px;overflow:hidden}
+.label-group-head{padding:12px 16px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--border2)}
+.label-group-head h4{font-family:'Syne',sans-serif;font-size:13px}
+.label-group-head input{background:transparent;border:none;color:inherit;font-family:'Syne',sans-serif;font-size:13px;font-weight:700;outline:none;flex:1}
+.label-group-head input:focus{border-bottom:1px solid var(--gold)}
+.label-tags{padding:12px 16px;display:flex;gap:8px;flex-wrap:wrap}
+.label-tag{padding:5px 12px;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:6px;border:1px solid transparent;transition:.15s}
+.label-tag:hover{opacity:.8}
+.label-tag .del-tag{background:none;border:none;cursor:pointer;color:inherit;opacity:.6;font-size:14px;padding:0;line-height:1}
+.add-tag-form{display:flex;gap:8px;padding:0 16px 12px;flex-wrap:wrap;align-items:center}
+.add-tag-form input{flex:1;min-width:120px;padding:7px 10px;background:var(--dark2);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text);outline:none}
+.color-pick{width:28px;height:28px;border:none;border-radius:6px;cursor:pointer;padding:2px}
+
+/* ── LEADS PANEL ── */
+.leads-panel{flex:1;display:flex;flex-direction:column;overflow:hidden}
+.leads-toolbar{display:flex;align-items:center;gap:10px;padding:12px 16px;border-bottom:1px solid var(--border2);background:var(--dark);flex-shrink:0;flex-wrap:wrap}
+.leads-toolbar h3{font-family:'Syne',sans-serif;font-size:15px;flex:1}
+.leads-table-wrap{flex:1;overflow-y:auto;padding:16px}
+.leads-table{background:var(--dark);border:1px solid var(--border);border-radius:14px;overflow:hidden;width:100%}
+
+/* ── MODAL ── */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.75);display:grid;place-items:center;z-index:1000;padding:20px}
+.modal{background:var(--dark);border:1px solid var(--border);border-radius:20px;padding:24px;width:min(480px,100%);box-shadow:var(--shadow)}
+.modal h3{font-family:'Syne',sans-serif;font-size:18px;margin-bottom:18px}
+.modal-fields{display:grid;gap:12px;margin-bottom:20px}
+.modal-fields label{display:block;font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--text3);margin-bottom:5px;font-weight:600}
+.modal-fields input,.modal-fields select,.modal-fields textarea{width:100%;padding:11px 13px;background:var(--dark2);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text);outline:none}
+.modal-fields input:focus,.modal-fields select:focus,.modal-fields textarea:focus{border-color:var(--gold)}
+.modal-fields select option{background:var(--dark2)}
+.modal-actions{display:flex;gap:10px;justify-content:flex-end}
+
+/* ── TOAST ── */
+.toast{position:fixed;right:18px;bottom:18px;background:var(--dark2);color:var(--text);border:1px solid var(--border);border-radius:12px;padding:12px 16px;box-shadow:var(--shadow);opacity:0;transform:translateY(12px);transition:.22s;pointer-events:none;z-index:9999;font-size:13px;max-width:300px}
+.toast.show{opacity:1;transform:translateY(0)}
+.toast.success{border-color:rgba(68,204,136,.4)}
+.toast.error{border-color:rgba(224,80,80,.4)}
+
+/* ── MEDIA QUERY ── */
+@media (max-width:1200px){.right-panel{display:none}}
+@media (max-width:900px){.sidebar{width:100%;min-width:0}.main{display:none}.app.mobile-chat .sidebar{display:none}.app.mobile-chat .main{display:flex}}
+</style>
 </head>
 <body>
-  <div id="login" class="login">
-    <div class="login-card">
-      <div class="brand">
-        <div class="brand-badge">W</div>
-        <div>
-          <h1>Painel Manager</h1>
-          <p>WhatsApp + n8n + CRM visual WantCash</p>
+
+<!-- LOGIN -->
+<div id="login" class="login">
+  <div class="login-card">
+    <div class="brand-row">
+      <div class="brand-logo"><span class="want">Want</span><span class="arrow">▶</span><br><span class="cash">Ca$h</span></div>
+      <div>
+        <div style="font-family:'Syne',sans-serif;font-size:18px;font-weight:700">CRM Manager</div>
+        <div class="brand-sub">WhatsApp + n8n + Pipeline</div>
+      </div>
+    </div>
+    <div class="login-fields">
+      <div class="lf"><label>URL do n8n</label><input id="n8nUrl" placeholder="https://wantcashtopcard.app.n8n.cloud"/></div>
+      <div class="lf"><label>Nome do atendente</label><input id="managerName" placeholder="Ex: Enzo Almeida Altoé"/></div>
+      <div class="lf"><label>Phone Number ID (opcional)</label><input id="phoneId" placeholder="1069703939552957"/></div>
+    </div>
+    <div class="login-actions">
+      <button class="btn btn-gold" id="loginBtn">Entrar no painel</button>
+      <button class="btn btn-dim" id="demoBtn">Preencher demo</button>
+    </div>
+    <div class="login-tip">Use apenas a base do n8n, sem <code>/webhook</code>. Atualiza a cada 5 segundos.</div>
+    <div class="login-error" id="loginError">Preencha URL e nome do atendente.</div>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app" class="app hidden">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-top">
+      <div class="sidebar-brand">
+        <div class="sb-logo"><span class="want">Want</span><span style="color:var(--gold)">▶</span><span class="cash">Ca$h</span> <span style="font-size:13px;color:var(--text3);font-weight:400">CRM</span></div>
+        <div class="sb-actions">
+          <button class="icon-btn" id="refreshBtn" title="Atualizar">⟳</button>
+          <button class="icon-btn" id="leadsSheetBtn" title="Leads da Planilha">📊</button>
+          <button class="icon-btn" id="logoutBtn" title="Sair">⏻</button>
         </div>
       </div>
-      <div class="fields">
-        <div class="field">
-          <label>URL base do n8n</label>
-          <input id="n8nUrl" placeholder="https://wantcashtopcard.app.n8n.cloud" />
+      <div class="sidebar-conn">
+        <div class="conn-row">
+          <input id="inlineUrl" placeholder="URL do n8n"/>
+          <input id="inlineManager" placeholder="Nome do atendente"/>
         </div>
-        <div class="field">
-          <label>Nome do manager</label>
-          <input id="managerName" placeholder="Ex: Enzo Almeida Altoé" />
-        </div>
-        <div class="field">
-          <label>Phone Number ID (opcional)</label>
-          <input id="phoneId" placeholder="1069703939552957" />
+        <button class="btn btn-gold btn-sm" id="connectBtn" style="width:100%">Conectar</button>
+      </div>
+    </div>
+    <div class="sidebar-search">
+      <input id="searchInput" placeholder="Buscar conversa..."/>
+    </div>
+    <div class="nav-tabs">
+      <button class="nav-tab active" data-main="conversas">Conversas</button>
+      <button class="nav-tab" data-main="kanban">Kanban</button>
+      <button class="nav-tab" data-main="dashboard">Vendas</button>
+      <button class="nav-tab" data-main="leads">Leads</button>
+      <button class="nav-tab" data-main="etiquetas">Etiquetas</button>
+      <button class="nav-tab" data-main="conhecimento">Conhecimento</button>
+    </div>
+
+    <!-- sub-tabs only for conversas -->
+    <div id="subTabsBar" class="sub-tabs">
+      <button class="sub-tab active" data-sub="ultimas">Todas</button>
+      <button class="sub-tab" data-sub="aguardando">Aguardando</button>
+      <button class="sub-tab" data-sub="bot">Bot</button>
+      <button class="sub-tab" data-sub="humano">Humano</button>
+      <button class="sub-tab" data-sub="link">Link enviado</button>
+    </div>
+
+    <div class="list" id="convList"></div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+    <!-- TOPBAR -->
+    <div class="topbar">
+      <div class="topbar-left">
+        <div class="avatar" id="topAvatar" style="width:36px;height:36px;font-size:14px">?</div>
+        <div class="topbar-info">
+          <h3 id="topTitle">Selecione uma conversa</h3>
+          <p id="topSub">Nenhuma conversa carregada</p>
         </div>
       </div>
-      <div class="login-actions">
-        <button class="btn btn-primary" id="loginBtn">Conectar ao painel</button>
-        <button class="btn btn-secondary" id="demoBtn">Preencher exemplo</button>
+      <div class="topbar-actions" id="topbarActions">
+        <button class="btn btn-dim btn-sm" id="assumirBtn">Assumir conversa</button>
+        <button class="btn btn-dim btn-sm" id="returnBotBtn">Devolver ao bot</button>
+        <button class="btn btn-dim btn-sm" id="fecharVendaBtn">Fechar venda</button>
+        <button class="btn btn-dim btn-sm" id="refreshChatBtn">↻</button>
       </div>
-      <div class="tip">Use apenas a base do n8n, sem <code>/webhook</code>. O painel atualiza a cada 5 segundos.</div>
-      <div class="error" id="loginError">Preencha URL do n8n e nome do manager.</div>
+    </div>
+
+    <!-- WORKSPACE -->
+    <div class="workspace" id="workspace">
+
+      <!-- CHAT VIEW -->
+      <div id="chatPanel" class="chat-wrap">
+        <div class="chat-header">
+          <div class="chat-left">
+            <div class="avatar" id="chatAvatar" style="width:40px;height:40px;font-size:16px">?</div>
+            <div>
+              <h4 id="chatName">—</h4>
+              <p id="chatMeta">—</p>
+            </div>
+          </div>
+          <div class="chat-right" id="chatLabelChips"></div>
+        </div>
+        <div class="messages" id="messagesArea">
+          <div class="empty-chat">
+            <div class="empty-icon">💬</div>
+            <div>Selecione uma conversa para começar</div>
+          </div>
+        </div>
+        <div class="composer">
+          <div class="composer-toolbar" id="composerToolbar">
+            <span style="font-size:12px;color:var(--text3);font-weight:600">Etiqueta:</span>
+            <div id="labelDropdownWrap"></div>
+          </div>
+          <div class="composer-main">
+            <button class="attach-btn" id="attachImgBtn" title="Imagem">🖼</button>
+            <input type="file" id="imgFileInput" class="file-input" accept="image/*"/>
+            <button class="attach-btn" id="attachAudioBtn" title="Arquivo de áudio">🎵</button>
+            <input type="file" id="audioFileInput" class="file-input" accept="audio/*"/>
+            <button class="record-btn" id="recordBtn" title="Gravar áudio">🎤</button>
+            <textarea id="replyBox" placeholder="Digite sua mensagem..."></textarea>
+            <button class="btn btn-gold" id="sendBtn">Enviar</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT PANEL -->
+      <aside class="right-panel" id="rightPanel">
+        <div class="rp-tabs">
+          <button class="rp-tab active" data-rp="info">Info</button>
+          <button class="rp-tab" data-rp="stats">Stats</button>
+          <button class="rp-tab" data-rp="queue">Fila</button>
+        </div>
+        <div class="rp-body" id="rpBody"></div>
+      </aside>
+
+      <!-- KANBAN PANEL -->
+      <div id="kanbanPanel" class="kanban-panel hidden">
+        <div class="kanban-toolbar">
+          <h3>Quadro Kanban</h3>
+          <button class="btn btn-gold btn-sm" id="addColBtn">+ Coluna</button>
+        </div>
+        <div class="kanban-board" id="kanbanBoard"></div>
+      </div>
+
+      <!-- DASHBOARD PANEL -->
+      <div id="dashboardPanel" class="dashboard-panel hidden">
+        <div class="dash-toolbar">
+          <h3>Dashboard de Vendas</h3>
+        </div>
+        <div class="dash-body" id="dashBody"></div>
+      </div>
+
+      <!-- LEADS PANEL -->
+      <div id="leadsPanel" class="leads-panel hidden">
+        <div class="leads-toolbar">
+          <h3>Leads da Planilha</h3>
+          <input id="sheetUrlInput" placeholder="URL da Google Sheets (CSV publicado)" style="flex:2;padding:8px 12px;background:var(--dark2);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text);outline:none;min-width:0"/>
+          <button class="btn btn-gold btn-sm" id="loadSheetBtn">Carregar</button>
+          <button class="btn btn-dim btn-sm" id="addLeadManualBtn">+ Adicionar</button>
+        </div>
+        <div class="leads-table-wrap">
+          <table class="leads-table" id="leadsTableEl">
+            <thead><tr><th>Nome</th><th>Número</th><th>Status</th><th>Etiqueta</th><th>Ações</th></tr></thead>
+            <tbody id="leadsTbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- LABELS PANEL -->
+      <div id="etiquetasPanel" class="labels-panel hidden">
+        <div class="labels-toolbar">
+          <h3>Grupos de Etiquetas</h3>
+          <button class="btn btn-gold btn-sm" id="addGroupBtn" disabled title="Máximo 3 grupos">+ Grupo</button>
+        </div>
+        <div class="labels-body" id="labelsBody"></div>
+      </div>
+
+      <!-- KNOWLEDGE PANEL -->
+      <div id="conhecimentoPanel" class="knowledge-panel hidden">
+        <div class="know-toolbar">
+          <h3>Conhecimento do Bot</h3>
+        </div>
+        <div class="know-body" id="knowBody"></div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- MODAL: Fechar Venda -->
+<div id="saleModal" class="modal-overlay hidden">
+  <div class="modal">
+    <h3>💰 Registrar Venda</h3>
+    <div class="modal-fields">
+      <div><label>Cliente</label><input id="saleClient" readonly/></div>
+      <div><label>Número</label><input id="saleNumber" readonly/></div>
+      <div><label>Produto / Plano</label><input id="salePlan" placeholder="Ex: Cartão WantCash Premium"/></div>
+      <div><label>Valor da Mensalidade (R$)</label><input id="saleValue" type="number" placeholder="0,00"/></div>
+      <div><label>Observação</label><textarea id="saleNote" rows="2" placeholder="Observações..."></textarea></div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-dim" id="saleCancel">Cancelar</button>
+      <button class="btn btn-gold" id="saleConfirm">Confirmar Venda</button>
     </div>
   </div>
+</div>
 
-  <div id="app" class="app hidden">
-    <aside class="sidebar">
-      <div class="sidebar-header">
-        <div class="sidebar-title">
-          <div>
-            <h2>Painel Manager</h2>
-            <p>WhatsApp + n8n + CRM</p>
-          </div>
-          <div class="header-actions">
-            <button class="icon-btn" id="refreshBtn" title="Atualizar">↻</button>
-            <button class="icon-btn" id="logoutBtn" title="Sair">⏻</button>
-          </div>
-        </div>
-        <div class="connect-row">
-          <input id="inlineUrl" placeholder="URL do n8n" />
-          <input id="inlineManager" placeholder="Nome do manager" />
-          <button class="btn btn-primary" id="connectBtn">Conectar</button>
-        </div>
-      </div>
-
-      <div class="search">
-        <input id="searchInput" placeholder="Buscar por nome, número, bucket, etapa..." />
-      </div>
-
-      <div class="tabs-top">
-        <button class="main-tab active" data-main-tab="conversas">Conversas</button>
-        <button class="main-tab" data-main-tab="crm">CRM Kanban</button>
-      </div>
-
-      <div id="sidebarConversas">
-        <div class="sub-tabs">
-          <button class="sub-tab active" data-sub-tab="ultimas">Últimas conversas</button>
-          <button class="sub-tab" data-sub-tab="aguardando">Aguardando manager</button>
-          <button class="sub-tab" data-sub-tab="bot">Interagiu com o bot</button>
-          <button class="sub-tab" data-sub-tab="humano">Interagiu com o humano</button>
-          <button class="sub-tab" data-sub-tab="link">Enviou o link</button>
-        </div>
-        <div class="list" id="conversationList"></div>
-      </div>
-
-      <div id="sidebarKanban" class="hidden">
-        <div class="empty-list">Use a aba <strong>CRM Kanban</strong> no painel central para visualizar o pipeline.</div>
-      </div>
-    </aside>
-
-    <main class="main">
-      <div class="topbar">
-        <div class="topbar-left">
-          <div class="avatar" style="width:50px;height:50px">?</div>
-          <div>
-            <h3 id="workspaceTitle">Selecione uma conversa</h3>
-            <p id="workspaceSubtitle">Nenhuma conversa carregada</p>
-          </div>
-        </div>
-        <div class="chat-actions">
-          <button class="btn btn-secondary" id="refreshChatBtn">Atualizar</button>
-          <button class="btn btn-secondary" id="returnBotBtn">Retornar para o bot</button>
-        </div>
-      </div>
-
-      <section id="chatView" class="workspace">
-        <div class="chat-wrap">
-          <div class="chat-header" id="chatHeader">
-            <div class="chat-contact">
-              <div class="avatar" id="chatAvatar">?</div>
-              <div>
-                <h4 id="chatName">Selecione uma conversa</h4>
-                <p id="chatMeta">Nenhuma conversa carregada</p>
-              </div>
-            </div>
-          </div>
-          <div class="messages" id="messagesArea">
-            <div class="empty-chat">
-              <div>
-                <div class="icon">💬</div>
-                <div>Selecione uma conversa para visualizar.</div>
-              </div>
-            </div>
-          </div>
-          <div class="composer">
-            <textarea id="replyBox" placeholder="Digite sua resposta como manager..."></textarea>
-            <button class="btn btn-primary" id="sendReplyBtn">Enviar</button>
-          </div>
-        </div>
-
-        <aside class="insights">
-          <div class="section">
-            <h3>Insights</h3>
-            <div class="stats-grid">
-              <div class="stat"><div class="label">Conversas</div><div class="value" id="statTotal">0</div></div>
-              <div class="stat"><div class="label">Aguardando manager</div><div class="value" id="statQueue">0</div></div>
-              <div class="stat"><div class="label">Interagiu com o bot</div><div class="value" id="statBot">0</div></div>
-              <div class="stat"><div class="label">Enviou o link</div><div class="value" id="statLink">0</div></div>
-            </div>
-          </div>
-          <div class="section">
-            <h4>Distribuição do CRM</h4>
-            <div class="progress-list">
-              <div class="progress"><div class="label"><span>Bot</span><span id="pctBot">0%</span></div><div class="bar"><span id="barBot" style="width:0%"></span></div></div>
-              <div class="progress"><div class="label"><span>Humano</span><span id="pctHumano">0%</span></div><div class="bar"><span id="barHumano" style="width:0%"></span></div></div>
-              <div class="progress"><div class="label"><span>Link enviado</span><span id="pctLink">0%</span></div><div class="bar"><span id="barLink" style="width:0%"></span></div></div>
-            </div>
-          </div>
-          <div class="section">
-            <h4>Fila de atenção</h4>
-            <div class="queue" id="queueList"></div>
-          </div>
-          <div class="section">
-            <h4>Conversa atual</h4>
-            <div id="currentInfo" class="muted">Selecione uma conversa para ver detalhes.</div>
-          </div>
-        </aside>
-      </section>
-
-      <section id="kanbanView" class="kanban-view">
-        <div class="kanban-grid">
-          <div class="column">
-            <div class="column-head"><h4>Interagiu com o bot</h4><span class="count" id="countBot">0</span></div>
-            <div class="cards" id="cardsBot"></div>
-          </div>
-          <div class="column">
-            <div class="column-head"><h4>Aguardando manager</h4><span class="count" id="countQueue">0</span></div>
-            <div class="cards" id="cardsQueue"></div>
-          </div>
-          <div class="column">
-            <div class="column-head"><h4>Interagiu com o humano</h4><span class="count" id="countHumano">0</span></div>
-            <div class="cards" id="cardsHumano"></div>
-          </div>
-          <div class="column">
-            <div class="column-head"><h4>Enviou o link</h4><span class="count" id="countLink">0</span></div>
-            <div class="cards" id="cardsLink"></div>
-          </div>
-        </div>
-      </section>
-    </main>
+<!-- MODAL: Adicionar Lead -->
+<div id="leadModal" class="modal-overlay hidden">
+  <div class="modal">
+    <h3>Adicionar Lead</h3>
+    <div class="modal-fields">
+      <div><label>Nome</label><input id="leadName" placeholder="Nome do lead"/></div>
+      <div><label>Número WhatsApp</label><input id="leadNum" placeholder="5511999999999"/></div>
+      <div><label>Status</label><select id="leadStatus"><option>Novo</option><option>Contatado</option><option>Convertido</option></select></div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-dim" id="leadCancel">Cancelar</button>
+      <button class="btn btn-gold" id="leadConfirm">Salvar</button>
+    </div>
   </div>
+</div>
 
-  <div id="toast" class="toast"></div>
+<div id="toast" class="toast"></div>
 
-  <script>
-    const state = {
-      n8nUrl: '',
-      managerName: '',
-      phoneId: '',
-      crmData: null,
-      currentConversation: null,
-      poller: null,
-      currentMainTab: 'conversas',
-      currentSubTab: 'ultimas',
-      searchTerm: ''
-    };
+<script>
+// ───────────────── STATE ─────────────────
+const S = {
+  n8nUrl:'', managerName:'', phoneId:'',
+  crmData:null, currentConv:null, poller:null,
+  mainTab:'conversas', subTab:'ultimas', search:'',
+  rpTab:'info',
+  kanbanCols:[
+    {id:'bot',title:'Interagiu com o Bot',leads:[]},
+    {id:'queue',title:'Aguardando Manager',leads:[]},
+    {id:'humano',title:'Interagiu com o Humano',leads:[]},
+    {id:'link',title:'Enviou o Link',leads:[]}
+  ],
+  labelGroups:[
+    {id:'g1',name:'Status',color:'#f0c226',tags:['Conversando','Interessado','Fechado']},
+    {id:'g2',name:'Prioridade',color:'#44aadd',tags:['Alta','Média','Baixa']},
+    {id:'g3',name:'Etapa',color:'#44cc88',tags:['Novo lead','Em follow-up','Aguardando doc']}
+  ],
+  convLabels:{}, // numero -> [tag]
+  sales:[],
+  sheetLeads:[],
+  isRecording:false, mediaRecorder:null, audioChunks:[]
+};
 
-    const $ = (id) => document.getElementById(id);
+// ───────────────── HELPERS ─────────────────
+const $=id=>document.getElementById(id);
+function esc(s){return String(s??'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
+function fmt(ts){if(!ts)return'';const d=new Date(ts);if(isNaN(d))return ts;return d.toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit'})+' '+d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})}
+function avatarOf(conv){return(conv.nome||conv.numero||'?').trim().slice(0,2).toUpperCase()}
+function toast(msg,type='success'){const t=$('toast');t.textContent=msg;t.className=`toast show ${type}`;clearTimeout(toast._t);toast._t=setTimeout(()=>t.className='toast',2800)}
+function saveLocal(){localStorage.setItem('wc_crm_v4',JSON.stringify({n8nUrl:S.n8nUrl,managerName:S.managerName,phoneId:S.phoneId,kanbanCols:S.kanbanCols,labelGroups:S.labelGroups,convLabels:S.convLabels,sales:S.sales,sheetLeads:S.sheetLeads}))}
+function loadLocal(){try{const r=localStorage.getItem('wc_crm_v4');if(!r)return;const d=JSON.parse(r);Object.assign(S,{n8nUrl:d.n8nUrl||'',managerName:d.managerName||'',phoneId:d.phoneId||'',kanbanCols:d.kanbanCols||S.kanbanCols,labelGroups:d.labelGroups||S.labelGroups,convLabels:d.convLabels||{},sales:d.sales||[],sheetLeads:d.sheetLeads||[]})}catch{}}
 
-    function showToast(msg, type='success') {
-      const t = $('toast');
-      t.textContent = msg;
-      t.className = `toast show ${type}`;
-      clearTimeout(showToast._timer);
-      showToast._timer = setTimeout(() => t.className = 'toast', 2600);
+async function safeFetch(url,opts={}){
+  const r=await fetch(url,opts);
+  const txt=await r.text();
+  let d={};try{d=txt?JSON.parse(txt):{}}catch{d={raw:txt}}
+  if(!r.ok)throw new Error(d.mensagem||d.message||d.error||d.raw||`HTTP ${r.status}`);
+  return d;
+}
+
+// ───────────────── CONNECT ─────────────────
+function doConnect(fromLogin=false){
+  const url=(fromLogin?$('n8nUrl').value:$('inlineUrl').value).trim().replace(/\/$/,'');
+  const mgr=(fromLogin?$('managerName').value:$('inlineManager').value).trim();
+  const pid=$('phoneId').value.trim();
+  if(!url||!mgr){$('loginError').style.display='block';return}
+  $('loginError').style.display='none';
+  S.n8nUrl=url;S.managerName=mgr;S.phoneId=pid;
+  $('inlineUrl').value=url;$('inlineManager').value=mgr;
+  saveLocal();
+  $('login').classList.add('hidden');$('app').classList.remove('hidden');
+  loadHistory();
+  clearInterval(S.poller);S.poller=setInterval(loadHistory,5000);
+  toast('Painel conectado. Bem-vindo, '+mgr+'!');
+}
+
+// ───────────────── DATA ─────────────────
+function allConvs(){
+  const d=S.crmData||{};
+  const seen=new Map();
+  [...(d.tabs?.ultimas_conversas||[]),...(d.tabs?.aguardando_manager||[]),...(d.crm?.INTERAGIU_COM_BOT||[]),...(d.crm?.INTERAGIU_COM_HUMANO||[]),...(d.crm?.ENVIOU_O_LINK||[])].forEach(c=>{if(c?.numero&&!seen.has(String(c.numero)))seen.set(String(c.numero),c)});
+  return [...seen.values()];
+}
+function subList(){
+  const d=S.crmData||{};
+  switch(S.subTab){
+    case'aguardando':return d.tabs?.aguardando_manager||[];
+    case'bot':return d.crm?.INTERAGIU_COM_BOT||[];
+    case'humano':return d.crm?.INTERAGIU_COM_HUMANO||[];
+    case'link':return d.crm?.ENVIOU_O_LINK||[];
+    default:return d.tabs?.ultimas_conversas||[];
+  }
+}
+
+async function loadHistory(){
+  if(!S.n8nUrl)return;
+  try{
+    const d=await safeFetch(`${S.n8nUrl}/webhook/whatsapp-historico`);
+    S.crmData=d;
+    if(S.mainTab==='conversas')renderConvList();
+    renderRightPanel();
+    if(S.mainTab==='kanban')renderKanban();
+    if(S.mainTab==='dashboard')renderDashboard();
+    if(S.currentConv?.numero){
+      const up=allConvs().find(c=>String(c.numero)===String(S.currentConv.numero));
+      if(up){S.currentConv=up;renderMessages(up)}
     }
+  }catch(e){toast('Erro ao carregar: '+e.message,'error')}
+}
 
-    function savePrefs() {
-      localStorage.setItem('wantcash_panel_v2', JSON.stringify({
-        n8nUrl: state.n8nUrl,
-        managerName: state.managerName,
-        phoneId: state.phoneId
-      }));
-    }
-
-    function loadPrefs() {
-      try {
-        const raw = localStorage.getItem('wantcash_panel_v2');
-        if (!raw) return;
-        const data = JSON.parse(raw);
-        state.n8nUrl = data.n8nUrl || '';
-        state.managerName = data.managerName || '';
-        state.phoneId = data.phoneId || '';
-      } catch {}
-    }
-
-    function fillInputs() {
-      $('n8nUrl').value = state.n8nUrl;
-      $('managerName').value = state.managerName;
-      $('phoneId').value = state.phoneId;
-      $('inlineUrl').value = state.n8nUrl;
-      $('inlineManager').value = state.managerName;
-    }
-
-    function doConnect(fromLogin = false) {
-      const url = (fromLogin ? $('n8nUrl').value : $('inlineUrl').value).trim().replace(/\/$/, '');
-      const manager = (fromLogin ? $('managerName').value : $('inlineManager').value).trim();
-      const phoneId = $('phoneId').value.trim();
-
-      if (!url || !manager) {
-        $('loginError').style.display = 'block';
-        $('loginError').textContent = 'Preencha URL do n8n e nome do manager.';
-        return;
-      }
-
-      $('loginError').style.display = 'none';
-      state.n8nUrl = url;
-      state.managerName = manager;
-      state.phoneId = phoneId;
-      savePrefs();
-      fillInputs();
-
-      $('login').classList.add('hidden');
-      $('app').classList.remove('hidden');
-      loadHistory();
-
-      clearInterval(state.poller);
-      state.poller = setInterval(loadHistory, 5000);
-      showToast('Painel conectado.');
-    }
-
-    async function safeFetchJson(url, options = {}) {
-      const res = await fetch(url, options);
-      const text = await res.text();
-      let data = {};
-      try { data = text ? JSON.parse(text) : {}; } catch { data = { raw: text }; }
-      if (!res.ok) {
-        throw new Error(data.mensagem || data.message || data.error || data.raw || `HTTP ${res.status}`);
-      }
-      return data;
-    }
-
-    function formatDate(ts) {
-      if (!ts) return '';
-      const d = new Date(ts);
-      if (Number.isNaN(d.getTime())) return ts;
-      return d.toLocaleDateString('pt-BR', { day:'2-digit', month:'2-digit' }) + ', ' +
-             d.toLocaleTimeString('pt-BR', { hour:'2-digit', minute:'2-digit' });
-    }
-
-    function avatarText(conv) {
-      const source = (conv.nome || conv.numero || '?').trim();
-      return source.slice(0,2).toUpperCase();
-    }
-
-    function normalizeAllConversations() {
-      const data = state.crmData || {};
-      const added = new Map();
-      const groups = [
-        ...(data.tabs?.ultimas_conversas || []),
-        ...(data.tabs?.aguardando_manager || []),
-        ...(data.crm?.INTERAGIU_COM_BOT || []),
-        ...(data.crm?.INTERAGIU_COM_HUMANO || []),
-        ...(data.crm?.ENVIOU_O_LINK || [])
-      ];
-      groups.forEach(conv => {
-        if (!conv || !conv.numero) return;
-        if (!added.has(String(conv.numero))) added.set(String(conv.numero), conv);
-      });
-      return [...added.values()];
-    }
-
-    function getCurrentSubList() {
-      const data = state.crmData || {};
-      switch (state.currentSubTab) {
-        case 'aguardando': return data.tabs?.aguardando_manager || [];
-        case 'bot': return data.crm?.INTERAGIU_COM_BOT || [];
-        case 'humano': return data.crm?.INTERAGIU_COM_HUMANO || [];
-        case 'link': return data.crm?.ENVIOU_O_LINK || [];
-        default: return data.tabs?.ultimas_conversas || [];
-      }
-    }
-
-    function renderConversationList() {
-      const root = $('conversationList');
-      const term = state.searchTerm.toLowerCase();
-      const list = getCurrentSubList().filter(conv => {
-        const hay = [
-          conv.nome,
-          conv.numero,
-          conv.crm_bucket,
-          conv.etapa_fechamento,
-          conv.ultima_texto,
-          conv.modo
-        ].join(' ').toLowerCase();
-        return hay.includes(term);
-      });
-
-      if (!list.length) {
-        root.innerHTML = '<div class="empty-list">Nenhuma conversa encontrada.</div>';
-        return;
-      }
-
-      root.innerHTML = list.map(conv => {
-        const active = state.currentConversation && String(state.currentConversation.numero) === String(conv.numero);
-        const bucketLabel = conv.crm_bucket || 'SEM_BUCKET';
-        const modo = conv.modo === 'humano' ? 'modo: humano' : 'modo: bot';
-        const queue = conv.aguardando_manager ? '<span class="chip yellow">aguardando manager</span>' : '';
-        return `
-          <div class="conv-item ${active ? 'active' : ''}" data-numero="${conv.numero}">
-            <div class="avatar">${avatarText(conv)}</div>
-            <div class="conv-main">
-              <div class="row-between">
-                <div class="name">${escapeHtml(conv.nome || conv.numero)}</div>
-                <div class="time">${formatDate(conv.last_updated_at)}</div>
-              </div>
-              <div class="preview">${escapeHtml(conv.ultima_texto || 'Sem mensagem')}</div>
-              <div class="chips">
-                <span class="chip green">${escapeHtml(bucketLabel)}</span>
-                <span class="chip">${escapeHtml(conv.etapa_fechamento || 'sem etapa')}</span>
-                <span class="chip">${escapeHtml(modo)}</span>
-                ${queue}
-              </div>
-            </div>
-          </div>
-        `;
-      }).join('');
-
-      root.querySelectorAll('.conv-item').forEach(el => {
-        el.addEventListener('click', () => {
-          const conv = normalizeAllConversations().find(c => String(c.numero) === el.dataset.numero);
-          if (conv) openConversation(conv);
-        });
-      });
-    }
-
-    function messageDirection(msg) {
-      if (!msg) return 'in';
-      if (msg.tipo === 'outbound') return 'out';
-      if ((msg.origem || '').toLowerCase() === 'painel') return 'out';
-      if ((msg.de || '').toLowerCase() === 'manager') return 'out';
-      if ((msg.autor || '').toLowerCase().includes('bot')) return 'out';
-      return 'in';
-    }
-
-    function renderMessages(conv) {
-      const root = $('messagesArea');
-      const mensagens = conv.mensagens || [];
-      if (!mensagens.length) {
-        root.innerHTML = '<div class="empty-chat"><div><div class="icon">💬</div><div>Sem mensagens nesta conversa.</div></div></div>';
-        return;
-      }
-      root.innerHTML = mensagens.map(msg => {
-        const dir = messageDirection(msg);
-        const sender = msg.autor || (dir === 'out' ? state.managerName : conv.nome || conv.numero);
-        return `
-          <div class="msg-row ${dir}">
-            <div class="bubble">
-              ${dir === 'out' ? `<div class="sender">${escapeHtml(sender)}</div>` : ''}
-              <div>${escapeHtml(msg.texto || '')}</div>
-              <div class="meta">
-                <span>${formatDate(msg.timestamp)}</span>
-                ${dir === 'out' ? '<span>✓✓</span>' : ''}
-              </div>
-            </div>
-          </div>
-        `;
-      }).join('');
-      root.scrollTop = root.scrollHeight;
-    }
-
-    function openConversation(conv) {
-      state.currentConversation = conv;
-      $('workspaceTitle').textContent = conv.nome || conv.numero;
-      $('workspaceSubtitle').textContent = `${conv.numero} • ${conv.crm_bucket || 'SEM_BUCKET'} • ${conv.modo === 'humano' ? 'manager' : 'bot'}${conv.manager_responsavel ? ' • manager: ' + conv.manager_responsavel : ''}`;
-      $('chatAvatar').textContent = avatarText(conv);
-      $('chatName').textContent = conv.nome || conv.numero;
-      $('chatMeta').textContent = `${conv.numero} • ${conv.crm_bucket || 'SEM_BUCKET'} • ${conv.etapa_fechamento || 'sem etapa'}`;
-      renderMessages(conv);
-      $('currentInfo').innerHTML = `
-        <div><strong>Número:</strong> ${escapeHtml(conv.numero || '-')}</div>
-        <div><strong>Bucket:</strong> ${escapeHtml(conv.crm_bucket || '-')}</div>
-        <div><strong>Etapa:</strong> ${escapeHtml(conv.etapa_fechamento || '-')}</div>
-        <div><strong>Modo:</strong> ${escapeHtml(conv.modo || '-')}</div>
-        <div><strong>Manager:</strong> ${escapeHtml(conv.manager_responsavel || '-')}</div>
-        <div><strong>Última atualização:</strong> ${escapeHtml(formatDate(conv.last_updated_at) || '-')}</div>
-      `;
-      renderConversationList();
-      if (window.innerWidth <= 980) $('app').classList.add('mobile-chat');
-    }
-
-    function renderInsights() {
-      const stats = state.crmData?.stats || {};
-      $('statTotal').textContent = stats.total_conversas || 0;
-      $('statQueue').textContent = stats.aguardando_manager || 0;
-      $('statBot').textContent = stats.interagiu_com_bot || 0;
-      $('statLink').textContent = stats.enviou_link || 0;
-
-      const total = Math.max(1, Number(stats.total_conversas || 0));
-      const botPct = Math.round(((stats.interagiu_com_bot || 0) / total) * 100);
-      const humPct = Math.round(((stats.interagiu_com_humano || 0) / total) * 100);
-      const linkPct = Math.round(((stats.enviou_link || 0) / total) * 100);
-
-      $('pctBot').textContent = `${botPct}%`;
-      $('pctHumano').textContent = `${humPct}%`;
-      $('pctLink').textContent = `${linkPct}%`;
-      $('barBot').style.width = `${botPct}%`;
-      $('barHumano').style.width = `${humPct}%`;
-      $('barLink').style.width = `${linkPct}%`;
-
-      const queue = state.crmData?.tabs?.aguardando_manager || [];
-      $('queueList').innerHTML = queue.length ? queue.map(conv => `
-        <div class="queue-item">
-          <div><strong>${escapeHtml(conv.nome || conv.numero)}</strong></div>
-          <div class="muted">${escapeHtml(conv.numero || '')}</div>
-          <div class="muted">${escapeHtml(conv.ultima_texto || '')}</div>
+// ───────────────── CONV LIST ─────────────────
+function renderConvList(){
+  const root=$('convList');
+  const term=S.search.toLowerCase();
+  const list=subList().filter(c=>[c.nome,c.numero,c.crm_bucket,c.etapa_fechamento,c.ultima_texto,c.modo].join(' ').toLowerCase().includes(term));
+  if(!list.length){root.innerHTML='<div class="empty-list">Nenhuma conversa encontrada.</div>';return}
+  root.innerHTML=list.map(c=>{
+    const active=S.currentConv&&String(S.currentConv.numero)===String(c.numero);
+    const labels=(S.convLabels[String(c.numero)]||[]).map(l=>`<span class="chip" style="background:${l.bg||'var(--dark3)'};color:${l.color||'var(--text2)'};">${esc(l.name)}</span>`).join('');
+    const botOn=c.modo!=='humano';
+    return`<div class="conv-item${active?' active':''}" data-num="${esc(c.numero)}">
+      <div class="avatar">${avatarOf(c)}</div>
+      <div class="conv-info">
+        <div class="conv-header">
+          <div class="conv-name">${esc(c.nome||c.numero)}</div>
+          <div class="conv-time">${fmt(c.last_updated_at)}</div>
         </div>
-      `).join('') : '<div class="muted">Nenhuma conversa aguardando manager.</div>';
-    }
-
-    function renderKanban() {
-      const crm = state.crmData?.crm || {};
-      const queue = state.crmData?.tabs?.aguardando_manager || [];
-      renderKanbanColumn('cardsBot', crm.INTERAGIU_COM_BOT || [], 'countBot');
-      renderKanbanColumn('cardsQueue', queue, 'countQueue');
-      renderKanbanColumn('cardsHumano', crm.INTERAGIU_COM_HUMANO || [], 'countHumano');
-      renderKanbanColumn('cardsLink', crm.ENVIOU_O_LINK || [], 'countLink');
-    }
-
-    function renderKanbanColumn(cardsId, list, countId) {
-      $(countId).textContent = list.length;
-      $(cardsId).innerHTML = list.length ? list.map(conv => `
-        <div class="card" data-kanban-numero="${conv.numero}">
-          <h5>${escapeHtml(conv.nome || conv.numero)}</h5>
-          <p>${escapeHtml(conv.ultima_texto || 'Sem mensagem')}</p>
-          <div class="chips" style="margin-bottom:10px">
-            <span class="chip">${escapeHtml(conv.etapa_fechamento || 'sem etapa')}</span>
-            <span class="chip ${conv.modo === 'humano' ? 'yellow' : ''}">${escapeHtml(conv.modo || 'bot')}</span>
-          </div>
-          <div class="mini">
-            <span>${escapeHtml(conv.numero || '')}</span>
-            <span>${formatDate(conv.last_updated_at)}</span>
-          </div>
+        <div class="conv-preview">${esc(c.ultima_texto||'Sem mensagem')}</div>
+        <div class="conv-chips">
+          <span class="chip gold">${esc(c.crm_bucket||'SEM_BUCKET')}</span>
+          <span class="chip">${esc(c.etapa_fechamento||'sem etapa')}</span>
+          <button class="bot-toggle ${botOn?'bot-on':'bot-off'}" data-num="${esc(c.numero)}" data-botstate="${botOn?'on':'off'}">${botOn?'BOT ON':'BOT OFF'}</button>
+          ${labels}
         </div>
-      `).join('') : '<div class="muted" style="padding:4px 2px">Nenhuma conversa nesta coluna.</div>';
+      </div>
+    </div>`;
+  }).join('');
+  root.querySelectorAll('.conv-item').forEach(el=>{el.addEventListener('click',e=>{if(e.target.classList.contains('bot-toggle'))return;const c=allConvs().find(x=>String(x.numero)===el.dataset.num);if(c)openConv(c)})});
+  root.querySelectorAll('.bot-toggle').forEach(btn=>{btn.addEventListener('click',e=>{e.stopPropagation();toggleBot(btn.dataset.num,btn.dataset.botstate)})});
+}
 
-      $(cardsId).querySelectorAll('.card').forEach(card => {
-        card.addEventListener('click', () => {
-          const conv = normalizeAllConversations().find(c => String(c.numero) === card.dataset.kanbanNumero);
-          if (conv) {
-            setMainTab('conversas');
-            openConversation(conv);
-          }
-        });
-      });
+async function toggleBot(numero,state){
+  try{
+    await safeFetch(`${S.n8nUrl}/webhook/whatsapp-handoff`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({numero,modo:state==='on'?'humano':'bot',manager:S.managerName})});
+    toast(state==='on'?'Bot desativado – modo humano':'Bot ativado');
+    await loadHistory();
+  }catch(e){toast('Erro: '+e.message,'error')}
+}
+
+// ───────────────── OPEN CONV ─────────────────
+function openConv(conv){
+  S.currentConv=conv;
+  $('topAvatar').textContent=avatarOf(conv);
+  $('topTitle').textContent=conv.nome||conv.numero;
+  $('topSub').textContent=`${conv.numero} · ${conv.crm_bucket||'SEM_BUCKET'} · ${conv.modo==='humano'?'humano':'bot'}`;
+  $('chatAvatar').textContent=avatarOf(conv);
+  $('chatName').textContent=conv.nome||conv.numero;
+  $('chatMeta').textContent=`${conv.numero} · ${conv.etapa_fechamento||'sem etapa'}`;
+  renderMessages(conv);
+  renderChatLabels(conv);
+  renderConvList();
+  renderRightPanel();
+  if(window.innerWidth<=900)$('app').classList.add('mobile-chat');
+}
+
+function renderChatLabels(conv){
+  const wrap=$('chatLabelChips');
+  const applied=S.convLabels[String(conv.numero)]||[];
+  wrap.innerHTML=applied.map(l=>`<span class="chip" style="background:${l.bg};color:${l.color}">${esc(l.name)}</span>`).join('');
+  // label dropdown in composer
+  buildLabelDropdown(conv);
+}
+
+function buildLabelDropdown(conv){
+  const wrap=$('labelDropdownWrap');
+  const allTags=S.labelGroups.flatMap(g=>g.tags.map(t=>({name:t,bg:g.color+'22',color:g.color,group:g.name})));
+  const applied=S.convLabels[String(conv.numero)]||[];
+  wrap.innerHTML=`<select id="labelSelect" style="padding:4px 8px;background:var(--dark2);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:12px">
+    <option value="">+ Aplicar etiqueta</option>
+    ${allTags.map(t=>`<option value="${esc(t.name)}|${esc(t.bg)}|${esc(t.color)}">${esc(t.group+': '+t.name)}</option>`).join('')}
+  </select>`;
+  wrap.querySelector('#labelSelect').addEventListener('change',e=>{
+    const val=e.target.value;if(!val)return;
+    const[name,bg,color]=val.split('|');
+    const key=String(conv.numero);
+    if(!S.convLabels[key])S.convLabels[key]=[];
+    if(!S.convLabels[key].find(x=>x.name===name)){S.convLabels[key].push({name,bg,color});saveLocal();renderChatLabels(conv);renderConvList()}
+    e.target.value='';
+  });
+}
+
+// ───────────────── MESSAGES ─────────────────
+function renderMessages(conv){
+  const root=$('messagesArea');
+  const msgs=conv.mensagens||[];
+  if(!msgs.length){root.innerHTML='<div class="empty-chat"><div class="empty-icon">💬</div><div>Sem mensagens nesta conversa.</div></div>';return}
+  root.innerHTML=msgs.map(msg=>{
+    const dir=msgDir(msg);
+    const sender=msg.autor||(dir==='out'?`*${S.managerName}*`:conv.nome||conv.numero);
+    let content='';
+    if(msg.tipo_midia==='audio'||msg.audio_url){
+      content=`<div class="msg-audio"><button class="audio-btn" onclick="playAudio('${esc(msg.audio_url||'')}')" title="Reproduzir">▶</button><div class="audio-bar"><div class="audio-bar-fill"></div></div><span style="font-size:11px;color:var(--text3)">${msg.duracao||'0:00'}</span></div>`;
+    }else if(msg.tipo_midia==='image'||msg.imagem_url){
+      content=`<img class="msg-img" src="${esc(msg.imagem_url||'')}" alt="imagem" onclick="window.open(this.src)"/>`;
+    }else{
+      const txt=esc(msg.texto||'').replace(/\*([^*]+)\*/g,'<strong>$1</strong>');
+      content=`<div class="msg-text">${txt}</div>`;
     }
+    return`<div class="msg-row ${dir}"><div class="bubble">${dir==='out'?`<div class="sender-label">${esc(sender)}</div>`:''}<div>${content}</div><div class="msg-meta"><span>${fmt(msg.timestamp)}</span>${dir==='out'?'<span>✓✓</span>':''}</div></div></div>`;
+  }).join('');
+  root.scrollTop=root.scrollHeight;
+}
+function msgDir(msg){if(msg.tipo==='outbound')return'out';if((msg.origem||'').toLowerCase()==='painel')return'out';if((msg.de||'').toLowerCase()==='manager')return'out';return'in'}
+function playAudio(url){if(!url){toast('URL de áudio não disponível','error');return}const a=new Audio(url);a.play().catch(()=>toast('Erro ao reproduzir áudio','error'))}
 
-    async function loadHistory() {
-      if (!state.n8nUrl) return;
-      try {
-        const data = await safeFetchJson(`${state.n8nUrl}/webhook/whatsapp-historico`);
-        state.crmData = data;
-        renderConversationList();
-        renderInsights();
-        renderKanban();
+// ───────────────── SEND ─────────────────
+async function sendReply(){
+  if(!S.currentConv){toast('Selecione uma conversa','error');return}
+  const txt=$('replyBox').value.trim();
+  if(!txt){toast('Digite uma mensagem','error');return}
+  const formattedMsg=`*${S.managerName}*: ${txt}`;
+  try{
+    await safeFetch(`${S.n8nUrl}/webhook/whatsapp-responder`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({para:S.currentConv.numero,mensagem:formattedMsg,manager:S.managerName,phoneNumberId:S.currentConv.phone_number_id||S.phoneId||''})});
+    $('replyBox').value='';toast('Mensagem enviada');
+    await loadHistory();
+  }catch(e){toast('Erro: '+e.message,'error')}
+}
 
-        if (state.currentConversation?.numero) {
-          const updated = normalizeAllConversations().find(c => String(c.numero) === String(state.currentConversation.numero));
-          if (updated) {
-            state.currentConversation = updated;
-            openConversation(updated);
-          }
-        }
-      } catch (err) {
-        showToast(`Erro ao carregar histórico: ${err.message}`, 'error');
-      }
-    }
+async function sendMedia(file,type){
+  if(!S.currentConv||!file)return;
+  try{
+    const fd=new FormData();fd.append('file',file);fd.append('para',S.currentConv.numero);fd.append('tipo',type);fd.append('manager',S.managerName);fd.append('phoneNumberId',S.currentConv.phone_number_id||S.phoneId||'');
+    await fetch(`${S.n8nUrl}/webhook/whatsapp-midia`,{method:'POST',body:fd});
+    toast(type==='audio'?'Áudio enviado':'Imagem enviada');await loadHistory();
+  }catch(e){toast('Erro ao enviar mídia: '+e.message,'error')}
+}
 
-    async function sendReply() {
-      if (!state.currentConversation) {
-        showToast('Selecione uma conversa.', 'error');
-        return;
-      }
-      const mensagem = $('replyBox').value.trim();
-      if (!mensagem) {
-        showToast('Digite uma mensagem.', 'error');
-        return;
-      }
-      try {
-        const payload = {
-          para: state.currentConversation.numero,
-          mensagem,
-          manager: state.managerName,
-          phoneNumberId: state.currentConversation.phone_number_id || state.phoneId || ''
-        };
-        await safeFetchJson(`${state.n8nUrl}/webhook/whatsapp-responder`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(payload)
-        });
-        $('replyBox').value = '';
-        showToast('Mensagem enviada.');
-        await loadHistory();
-      } catch (err) {
-        showToast(`Erro ao responder: ${err.message}`, 'error');
-      }
-    }
+// Recording
+async function toggleRecording(){
+  if(!S.isRecording){
+    try{
+      const stream=await navigator.mediaDevices.getUserMedia({audio:true});
+      S.mediaRecorder=new MediaRecorder(stream);S.audioChunks=[];
+      S.mediaRecorder.ondataavailable=e=>{if(e.data.size>0)S.audioChunks.push(e.data)};
+      S.mediaRecorder.onstop=async()=>{
+        const blob=new Blob(S.audioChunks,{type:'audio/webm'});
+        const file=new File([blob],'audio.webm',{type:'audio/webm'});
+        stream.getTracks().forEach(t=>t.stop());
+        await sendMedia(file,'audio');
+      };
+      S.mediaRecorder.start();S.isRecording=true;
+      $('recordBtn').classList.add('recording');$('recordBtn').textContent='⏹';
+      toast('Gravando... Clique para parar');
+    }catch(e){toast('Microfone não disponível','error')}
+  }else{
+    S.mediaRecorder.stop();S.isRecording=false;
+    $('recordBtn').classList.remove('recording');$('recordBtn').textContent='🎤';
+  }
+}
 
-    async function returnToBot() {
-      if (!state.currentConversation) {
-        showToast('Selecione uma conversa.', 'error');
-        return;
-      }
-      try {
-        await safeFetchJson(`${state.n8nUrl}/webhook/whatsapp-handoff`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            numero: state.currentConversation.numero,
-            modo: 'bot',
-            manager: state.managerName
-          })
-        });
-        showToast('Conversa devolvida ao bot.');
-        await loadHistory();
-      } catch (err) {
-        showToast(`Erro ao retornar ao bot: ${err.message}`, 'error');
-      }
-    }
+// ───────────────── RIGHT PANEL ─────────────────
+function renderRightPanel(){
+  const body=$('rpBody');
+  if(S.rpTab==='info'){
+    const c=S.currentConv;
+    if(!c){body.innerHTML='<div style="color:var(--text3)">Selecione uma conversa.</div>';return}
+    body.innerHTML=`<div class="section-title">Conversa atual</div>
+      ${[['Nome',c.nome||'-'],['Número',c.numero||'-'],['Bucket',c.crm_bucket||'-'],['Etapa',c.etapa_fechamento||'-'],['Modo',c.modo||'-'],['Manager',c.manager_responsavel||'-'],['Atualizado',fmt(c.last_updated_at)||'-']].map(([l,v])=>`<div class="info-row"><div class="info-label">${l}</div><div class="info-val">${esc(v)}</div></div>`).join('')}`;
+  }else if(S.rpTab==='stats'){
+    const s=S.crmData?.stats||{};
+    const tot=Math.max(1,Number(s.total_conversas||0));
+    const items=[['interagiu_com_bot','Bot'],['interagiu_com_humano','Humano'],['enviou_link','Link enviado']];
+    body.innerHTML=`<div class="section-title">Totais</div>
+      <div class="stat-grid">
+        <div class="stat-card"><div class="stat-label">Conversas</div><div class="stat-val">${s.total_conversas||0}</div></div>
+        <div class="stat-card"><div class="stat-label">Aguardando</div><div class="stat-val">${s.aguardando_manager||0}</div></div>
+        <div class="stat-card"><div class="stat-label">Bot</div><div class="stat-val">${s.interagiu_com_bot||0}</div></div>
+        <div class="stat-card"><div class="stat-label">Link enviado</div><div class="stat-val">${s.enviou_link||0}</div></div>
+      </div>
+      <div class="section-title">Distribuição</div>
+      ${items.map(([k,l])=>{const p=Math.round(((s[k]||0)/tot)*100);return`<div class="prog-item"><div class="prog-label"><span>${l}</span><span>${p}%</span></div><div class="prog-bar"><div class="prog-fill" style="width:${p}%"></div></div></div>`}).join('')}`;
+  }else{
+    const q=S.crmData?.tabs?.aguardando_manager||[];
+    body.innerHTML=`<div class="section-title">Aguardando manager (${q.length})</div>`+(q.length?q.map(c=>`<div class="queue-item"><div class="queue-name">${esc(c.nome||c.numero)}</div><div class="queue-num">${esc(c.numero)}</div><div style="font-size:12px;color:var(--text3);margin-top:4px">${esc(c.ultima_texto||'')}</div></div>`).join(''):'<div style="color:var(--text3)">Fila vazia.</div>');
+  }
+}
 
-    function setMainTab(tab) {
-      state.currentMainTab = tab;
-      document.querySelectorAll('.main-tab').forEach(btn => btn.classList.toggle('active', btn.dataset.mainTab === tab));
-      const convMode = tab === 'conversas';
-      $('sidebarConversas').classList.toggle('hidden', !convMode);
-      $('sidebarKanban').classList.toggle('hidden', convMode);
-      $('chatView').style.display = convMode ? 'flex' : 'none';
-      $('kanbanView').classList.toggle('active', !convMode);
-    }
+// ───────────────── KANBAN ─────────────────
+function renderKanban(){
+  const board=$('kanbanBoard');
+  // sync CRM data into kanban cols
+  const d=S.crmData||{};
+  const autoMap={bot:d.crm?.INTERAGIU_COM_BOT||[],queue:d.tabs?.aguardando_manager||[],humano:d.crm?.INTERAGIU_COM_HUMANO||[],link:d.crm?.ENVIOU_O_LINK||[]};
+  S.kanbanCols.forEach(col=>{if(autoMap[col.id])col.leads=autoMap[col.id]});
 
-    function setSubTab(tab) {
-      state.currentSubTab = tab;
-      document.querySelectorAll('.sub-tab').forEach(btn => btn.classList.toggle('active', btn.dataset.subTab === tab));
-      renderConversationList();
-    }
+  board.innerHTML=S.kanbanCols.map((col,ci)=>`
+    <div class="kb-col" data-col-id="${esc(col.id)}">
+      <div class="kb-col-head">
+        <div class="kb-col-title">
+          <input value="${esc(col.title)}" data-col-idx="${ci}" class="kb-title-input"/>
+        </div>
+        <div style="display:flex;align-items:center;gap:6px">
+          <span class="kb-count">${col.leads.length}</span>
+          <button class="icon-btn" style="width:26px;height:26px;font-size:13px" data-del-col="${ci}" title="Remover coluna">✕</button>
+        </div>
+      </div>
+      <div class="kb-cards">${col.leads.length?col.leads.map((lead,li)=>`
+        <div class="kb-card" data-col="${ci}" data-lead="${li}">
+          <h5>${esc(lead.nome||lead.numero)}</h5>
+          <p>${esc(lead.ultima_texto||'Sem mensagem')}</p>
+          <div class="conv-chips" style="margin-bottom:8px">
+            <span class="chip">${esc(lead.etapa_fechamento||'sem etapa')}</span>
+          </div>
+          <div class="kb-card-meta"><span>${esc(lead.numero||'')}</span><span>${fmt(lead.last_updated_at)}</span></div>
+          <div class="kb-card-btns">
+            ${ci>0?`<button class="kb-move-btn" data-move-left="${ci}" data-lead="${li}">◀</button>`:''}
+            ${ci<S.kanbanCols.length-1?`<button class="kb-move-btn" data-move-right="${ci}" data-lead="${li}">▶</button>`:''}
+            <button class="kb-move-btn" data-open-lead="${JSON.stringify(lead).replace(/"/g,'&quot;')}" style="margin-left:auto">Abrir</button>
+          </div>
+        </div>`).join(''):'<div style="color:var(--text3);font-size:13px;padding:4px">Nenhum lead aqui.</div>'}</div>
+    </div>`).join('')+
+    `<button class="add-col-btn" id="addColBtn2">＋ Nova coluna</button>`;
 
-    function escapeHtml(str) {
-      return String(str ?? '')
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;')
-        .replace(/'/g, '&#039;');
-    }
+  board.querySelectorAll('.kb-title-input').forEach(inp=>{inp.addEventListener('change',e=>{S.kanbanCols[+e.target.dataset.colIdx].title=e.target.value;saveLocal()})});
+  board.querySelectorAll('[data-del-col]').forEach(btn=>{btn.addEventListener('click',e=>{e.stopPropagation();const i=+btn.dataset.delCol;if(confirm('Remover coluna?')){S.kanbanCols.splice(i,1);saveLocal();renderKanban()}})});
+  board.querySelectorAll('[data-move-left]').forEach(btn=>{btn.addEventListener('click',e=>{e.stopPropagation();moveKanban(+btn.dataset.moveLeft,+btn.dataset.lead,-1)})});
+  board.querySelectorAll('[data-move-right]').forEach(btn=>{btn.addEventListener('click',e=>{e.stopPropagation();moveKanban(+btn.dataset.moveRight,+btn.dataset.lead,1)})});
+  board.querySelectorAll('[data-open-lead]').forEach(btn=>{btn.addEventListener('click',e=>{e.stopPropagation();const lead=JSON.parse(btn.dataset.openLead.replace(/&quot;/g,'"'));setMainTab('conversas');openConv(lead)})});
+  const addBtn2=document.getElementById('addColBtn2');if(addBtn2)addBtn2.addEventListener('click',addKanbanCol);
+}
+function moveKanban(colIdx,leadIdx,dir){
+  const targetIdx=colIdx+dir;if(targetIdx<0||targetIdx>=S.kanbanCols.length)return;
+  const[lead]=S.kanbanCols[colIdx].leads.splice(leadIdx,1);
+  S.kanbanCols[targetIdx].leads.push(lead);saveLocal();renderKanban();
+}
+function addKanbanCol(){S.kanbanCols.push({id:'col_'+Date.now(),title:'Nova Coluna',leads:[]});saveLocal();renderKanban()}
 
-    function logout() {
-      clearInterval(state.poller);
-      $('app').classList.add('hidden');
-      $('login').classList.remove('hidden');
-    }
+// ───────────────── DASHBOARD ─────────────────
+function renderDashboard(){
+  const body=$('dashBody');
+  const total=S.sales.length;
+  const totalVal=S.sales.reduce((a,s)=>a+(+s.value||0),0);
+  const thisMonth=S.sales.filter(s=>{const d=new Date(s.date);const n=new Date();return d.getMonth()===n.getMonth()&&d.getFullYear()===n.getFullYear()});
+  body.innerHTML=`
+    <div class="dash-stats">
+      <div class="dash-stat"><div class="ds-label">Total de vendas</div><div class="ds-val">${total}</div></div>
+      <div class="dash-stat"><div class="ds-label">Receita total</div><div class="ds-val">R$ ${totalVal.toFixed(2).replace('.',',')}</div></div>
+      <div class="dash-stat"><div class="ds-label">Vendas este mês</div><div class="ds-val">${thisMonth.length}</div></div>
+      <div class="dash-stat"><div class="ds-label">Ticket médio</div><div class="ds-val">${total?'R$ '+(totalVal/total).toFixed(2).replace('.',','):'—'}</div></div>
+    </div>
+    <div class="sales-table">
+      <div class="sales-table-head"><h4>Histórico de vendas</h4></div>
+      <table><thead><tr><th>Cliente</th><th>Número</th><th>Plano</th><th>Mensalidade</th><th>Data</th><th>Obs.</th></tr></thead>
+        <tbody>${S.sales.length?S.sales.slice().reverse().map(s=>`<tr><td>${esc(s.client)}</td><td>${esc(s.number)}</td><td>${esc(s.plan)}</td><td style="color:var(--gold);font-weight:700">R$ ${(+s.value).toFixed(2).replace('.',',')}</td><td>${fmt(s.date)}</td><td style="color:var(--text3)">${esc(s.note)}</td></tr>`).join(''):'<tr><td colspan="6" style="text-align:center;color:var(--text3)">Nenhuma venda registrada ainda.</td></tr>'}</tbody>
+      </table>
+    </div>`;
+}
 
-    $('loginBtn').addEventListener('click', () => doConnect(true));
-    $('connectBtn').addEventListener('click', () => doConnect(false));
-    $('demoBtn').addEventListener('click', () => {
-      $('n8nUrl').value = 'https://wantcashtopcard.app.n8n.cloud';
-      $('managerName').value = 'Enzo Almeida Altoé';
-      $('phoneId').value = '1069703939552957';
-    });
-    $('refreshBtn').addEventListener('click', loadHistory);
-    $('refreshChatBtn').addEventListener('click', loadHistory);
-    $('logoutBtn').addEventListener('click', logout);
-    $('sendReplyBtn').addEventListener('click', sendReply);
-    $('returnBotBtn').addEventListener('click', returnToBot);
-    $('searchInput').addEventListener('input', (e) => {
-      state.searchTerm = e.target.value || '';
-      renderConversationList();
-    });
-    $('replyBox').addEventListener('keydown', (e) => {
-      if (e.key === 'Enter' && !e.shiftKey) {
-        e.preventDefault();
-        sendReply();
-      }
-    });
-    document.querySelectorAll('.main-tab').forEach(btn => btn.addEventListener('click', () => setMainTab(btn.dataset.mainTab)));
-    document.querySelectorAll('.sub-tab').forEach(btn => btn.addEventListener('click', () => setSubTab(btn.dataset.subTab)));
+// ───────────────── LEADS ─────────────────
+function renderLeads(){
+  const tbody=$('leadsTbody');
+  if(!S.sheetLeads.length){tbody.innerHTML='<tr><td colspan="5" style="text-align:center;color:var(--text3)">Nenhum lead carregado. Cole a URL da planilha publicada como CSV.</td></tr>';return}
+  tbody.innerHTML=S.sheetLeads.map((l,i)=>`<tr>
+    <td>${esc(l.nome||l.name||'')}</td>
+    <td>${esc(l.numero||l.phone||l.whatsapp||'')}</td>
+    <td><span class="chip ${l.status==='Convertido'?'green':l.status==='Contatado'?'gold':'blue'}">${esc(l.status||'Novo')}</span></td>
+    <td>${esc(l.etiqueta||'—')}</td>
+    <td style="display:flex;gap:6px;flex-wrap:wrap">
+      <button class="btn btn-dim btn-sm" data-msg-lead="${i}">Mensagem</button>
+      <select data-status-lead="${i}" style="padding:4px 8px;background:var(--dark2);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:12px">
+        <option ${l.status==='Novo'?'selected':''}>Novo</option>
+        <option ${l.status==='Contatado'?'selected':''}>Contatado</option>
+        <option ${l.status==='Convertido'?'selected':''}>Convertido</option>
+      </select>
+    </td>
+  </tr>`).join('');
+  tbody.querySelectorAll('[data-msg-lead]').forEach(btn=>{btn.addEventListener('click',()=>{const l=S.sheetLeads[+btn.dataset.msgLead];const conv={numero:l.numero||l.phone||l.whatsapp||'',nome:l.nome||l.name||'',mensagens:[],crm_bucket:'LEAD_PLANILHA',modo:'bot'};setMainTab('conversas');openConv(conv)})});
+  tbody.querySelectorAll('[data-status-lead]').forEach(sel=>{sel.addEventListener('change',()=>{S.sheetLeads[+sel.dataset.statusLead].status=sel.value;saveLocal();renderLeads()})});
+}
 
-    loadPrefs();
-    fillInputs();
-  </script>
+async function loadSheet(){
+  const url=$('sheetUrlInput').value.trim();
+  if(!url){toast('Insira a URL da planilha','error');return}
+  try{
+    const r=await fetch(url);const txt=await r.text();
+    const lines=txt.trim().split('\n');
+    const headers=lines[0].split(',').map(h=>h.trim().replace(/"/g,'').toLowerCase());
+    S.sheetLeads=lines.slice(1).map(line=>{const vals=line.split(',');const obj={};headers.forEach((h,i)=>{obj[h]=(vals[i]||'').trim().replace(/"/g,'')});obj.status=obj.status||'Novo';return obj});
+    saveLocal();renderLeads();toast(`${S.sheetLeads.length} leads carregados`);
+  }catch(e){toast('Erro ao carregar planilha: '+e.message,'error')}
+}
+
+// ───────────────── LABELS ─────────────────
+function renderLabels(){
+  const body=$('labelsBody');
+  body.innerHTML=S.labelGroups.map((g,gi)=>`
+    <div class="label-group">
+      <div class="label-group-head">
+        <input value="${esc(g.name)}" data-gi="${gi}" class="lg-name-input" style="font-weight:700"/>
+        <div style="display:flex;gap:6px;align-items:center">
+          <input type="color" value="${g.color}" data-gi="${gi}" class="color-pick lg-color-input" title="Cor do grupo"/>
+          <button class="icon-btn" style="width:26px;height:26px;font-size:13px" data-del-group="${gi}">✕</button>
+        </div>
+      </div>
+      <div class="label-tags">
+        ${g.tags.map((t,ti)=>`<span class="label-tag" style="background:${g.color}22;color:${g.color};border-color:${g.color}44">${esc(t)}<button class="del-tag" data-gi="${gi}" data-ti="${ti}">✕</button></span>`).join('')}
+      </div>
+      <div class="add-tag-form">
+        <input placeholder="Nova etiqueta" data-gi="${gi}" class="new-tag-input"/>
+        <button class="btn btn-gold btn-sm" data-add-tag="${gi}">+ Adicionar</button>
+      </div>
+    </div>`).join('')+
+    `<button class="btn btn-dim" id="addGroupBtnBody" style="margin-top:8px" ${S.labelGroups.length>=3?'disabled title="Máximo 3 grupos"':''}>+ Novo grupo</button>`;
+
+  body.querySelectorAll('.lg-name-input').forEach(inp=>{inp.addEventListener('change',e=>{S.labelGroups[+e.target.dataset.gi].name=e.target.value;saveLocal()})});
+  body.querySelectorAll('.lg-color-input').forEach(inp=>{inp.addEventListener('input',e=>{S.labelGroups[+e.target.dataset.gi].color=e.target.value;saveLocal();renderLabels()})});
+  body.querySelectorAll('[data-del-group]').forEach(btn=>{btn.addEventListener('click',()=>{if(confirm('Remover grupo?')){S.labelGroups.splice(+btn.dataset.delGroup,1);saveLocal();renderLabels()}})});
+  body.querySelectorAll('.del-tag').forEach(btn=>{btn.addEventListener('click',()=>{S.labelGroups[+btn.dataset.gi].tags.splice(+btn.dataset.ti,1);saveLocal();renderLabels()})});
+  body.querySelectorAll('[data-add-tag]').forEach(btn=>{btn.addEventListener('click',()=>{const gi=+btn.dataset.addTag;const inp=body.querySelector(`.new-tag-input[data-gi="${gi}"]`);const val=inp.value.trim();if(!val){toast('Digite um nome','error');return}S.labelGroups[gi].tags.push(val);inp.value='';saveLocal();renderLabels()})});
+  const addBtn=document.getElementById('addGroupBtnBody');if(addBtn)addBtn.addEventListener('click',()=>{if(S.labelGroups.length>=3){toast('Máximo de 3 grupos','error');return}S.labelGroups.push({id:'g'+Date.now(),name:'Novo Grupo',color:'#f0c226',tags:[]});saveLocal();renderLabels()});
+  $('addGroupBtn').disabled=S.labelGroups.length>=3;
+}
+
+// ───────────────── KNOWLEDGE ─────────────────
+function renderKnowledge(){
+  const body=$('knowBody');
+  const items=[
+    {title:'Apresentação do produto',body:'O bot apresenta o cartão WantCash como uma solução financeira sem anuidade, com limite pré-aprovado e cashback em todas as compras.'},
+    {title:'Processo de qualificação',body:'O bot pergunta sobre renda mensal, CPF, nome completo e e-mail para gerar o lead qualificado antes de passar para o manager humano.'},
+    {title:'Objeções comuns',body:'Principais objeções: "não tenho como comprovar renda", "já tenho cartão", "desconfio de golpe". O bot tem scripts para cada uma dessas situações.'},
+    {title:'Gatilhos de transferência para humano',body:'O bot transfere quando: lead pede para falar com atendente, menciona problema técnico, ou já passou pelas etapas de qualificação com interesse confirmado.'},
+    {title:'Follow-up automático',body:'24h após o primeiro contato sem resposta: mensagem de follow-up. 48h: segunda tentativa. 72h: mensagem de encerramento temporário.'},
+    {title:'Horário de atendimento',body:'Bot disponível 24/7. Atendimento humano de segunda a sexta das 8h às 20h e sábados das 8h às 14h.'},
+  ];
+  body.innerHTML=items.map((item,i)=>`
+    <div class="know-card">
+      <div class="know-card-head" onclick="toggleKnow(${i})">
+        <h4>${esc(item.title)}</h4>
+        <span id="knowArr${i}">▼</span>
+      </div>
+      <div class="know-card-body" id="knowBody${i}" style="display:none">${esc(item.body)}</div>
+    </div>`).join('');
+}
+function toggleKnow(i){const b=document.getElementById('knowBody'+i);const a=document.getElementById('knowArr'+i);if(b.style.display==='none'){b.style.display='block';a.textContent='▲'}else{b.style.display='none';a.textContent='▼'}}
+
+// ───────────────── ACTIONS ─────────────────
+async function assumirConversa(){
+  if(!S.currentConv){toast('Selecione uma conversa','error');return}
+  try{
+    await safeFetch(`${S.n8nUrl}/webhook/whatsapp-handoff`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({numero:S.currentConv.numero,modo:'humano',manager:S.managerName})});
+    toast('Conversa assumida por '+S.managerName);await loadHistory();
+  }catch(e){toast('Erro: '+e.message,'error')}
+}
+
+async function returnToBot(){
+  if(!S.currentConv){toast('Selecione uma conversa','error');return}
+  try{
+    await safeFetch(`${S.n8nUrl}/webhook/whatsapp-handoff`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({numero:S.currentConv.numero,modo:'bot',manager:S.managerName})});
+    toast('Conversa devolvida ao bot');await loadHistory();
+  }catch(e){toast('Erro: '+e.message,'error')}
+}
+
+function openSaleModal(){
+  if(!S.currentConv){toast('Selecione uma conversa','error');return}
+  $('saleClient').value=S.currentConv.nome||S.currentConv.numero;
+  $('saleNumber').value=S.currentConv.numero;
+  $('salePlan').value='';$('saleValue').value='';$('saleNote').value='';
+  $('saleModal').classList.remove('hidden');
+}
+function confirmSale(){
+  const plan=$('salePlan').value.trim();const val=$('saleValue').value;
+  if(!plan||!val){toast('Preencha plano e valor','error');return}
+  S.sales.push({client:$('saleClient').value,number:$('saleNumber').value,plan,value:+val,note:$('saleNote').value,date:new Date().toISOString()});
+  saveLocal();$('saleModal').classList.add('hidden');toast('💰 Venda registrada com sucesso!');
+  renderDashboard();
+}
+
+// ───────────────── TABS ─────────────────
+function setMainTab(tab){
+  S.mainTab=tab;
+  document.querySelectorAll('.nav-tab').forEach(b=>b.classList.toggle('active',b.dataset.main===tab));
+  $('subTabsBar').style.display=tab==='conversas'?'flex':'none';
+  const panels={chatPanel:false,kanbanPanel:false,dashboardPanel:false,leadsPanel:false,etiquetasPanel:false,conhecimentoPanel:false};
+  const topActions=['assumirBtn','returnBotBtn','fecharVendaBtn','refreshChatBtn'];
+  if(tab==='conversas'){panels.chatPanel=true;topActions.forEach(id=>$(id)&&($(id).style.display=''));}
+  else if(tab==='kanban'){panels.kanbanPanel=true;topActions.forEach(id=>$(id)&&($(id).style.display='none'));renderKanban();}
+  else if(tab==='dashboard'){panels.dashboardPanel=true;topActions.forEach(id=>$(id)&&($(id).style.display='none'));renderDashboard();}
+  else if(tab==='leads'){panels.leadsPanel=true;topActions.forEach(id=>$(id)&&($(id).style.display='none'));renderLeads();}
+  else if(tab==='etiquetas'){panels.etiquetasPanel=true;topActions.forEach(id=>$(id)&&($(id).style.display='none'));renderLabels();}
+  else if(tab==='conhecimento'){panels.conhecimentoPanel=true;topActions.forEach(id=>$(id)&&($(id).style.display='none'));renderKnowledge();}
+  Object.entries(panels).forEach(([id,show])=>{const el=$(id);if(el){if(show){el.classList.remove('hidden');el.style.display='flex'}else{el.classList.add('hidden');el.style.display='none'}}});
+  $('rightPanel').style.display=tab==='conversas'?'':'none';
+}
+
+function setSubTab(tab){
+  S.subTab=tab;
+  document.querySelectorAll('.sub-tab').forEach(b=>b.classList.toggle('active',b.dataset.sub===tab));
+  renderConvList();
+}
+
+function setRpTab(tab){
+  S.rpTab=tab;
+  document.querySelectorAll('.rp-tab').forEach(b=>b.classList.toggle('active',b.dataset.rp===tab));
+  renderRightPanel();
+}
+
+// ───────────────── INIT ─────────────────
+function init(){
+  loadLocal();
+  $('n8nUrl').value=S.n8nUrl;$('managerName').value=S.managerName;$('phoneId').value=S.phoneId;
+  $('inlineUrl').value=S.n8nUrl;$('inlineManager').value=S.managerName;
+
+  $('loginBtn').addEventListener('click',()=>doConnect(true));
+  $('connectBtn').addEventListener('click',()=>doConnect(false));
+  $('demoBtn').addEventListener('click',()=>{$('n8nUrl').value='https://wantcashtopcard.app.n8n.cloud';$('managerName').value='Enzo Almeida Altoé';$('phoneId').value='1069703939552957'});
+  $('logoutBtn').addEventListener('click',()=>{clearInterval(S.poller);$('app').classList.add('hidden');$('login').classList.remove('hidden')});
+  $('refreshBtn').addEventListener('click',loadHistory);
+  $('refreshChatBtn').addEventListener('click',loadHistory);
+  $('sendBtn').addEventListener('click',sendReply);
+  $('assumirBtn').addEventListener('click',assumirConversa);
+  $('returnBotBtn').addEventListener('click',returnToBot);
+  $('fecharVendaBtn').addEventListener('click',openSaleModal);
+  $('recordBtn').addEventListener('click',toggleRecording);
+  $('attachImgBtn').addEventListener('click',()=>$('imgFileInput').click());
+  $('imgFileInput').addEventListener('change',e=>{const f=e.target.files[0];if(f)sendMedia(f,'image');e.target.value=''});
+  $('attachAudioBtn').addEventListener('click',()=>$('audioFileInput').click());
+  $('audioFileInput').addEventListener('change',e=>{const f=e.target.files[0];if(f)sendMedia(f,'audio');e.target.value=''});
+  $('searchInput').addEventListener('input',e=>{S.search=e.target.value;renderConvList()});
+  $('replyBox').addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendReply()}});
+  $('saleCancel').addEventListener('click',()=>$('saleModal').classList.add('hidden'));
+  $('saleConfirm').addEventListener('click',confirmSale);
+  $('loadSheetBtn').addEventListener('click',loadSheet);
+  $('addLeadManualBtn').addEventListener('click',()=>$('leadModal').classList.remove('hidden'));
+  $('leadCancel').addEventListener('click',()=>$('leadModal').classList.add('hidden'));
+  $('leadConfirm').addEventListener('click',()=>{const n=$('leadName').value.trim(),p=$('leadNum').value.trim();if(!n||!p){toast('Preencha nome e número','error');return}S.sheetLeads.push({nome:n,numero:p,status:$('leadStatus').value});saveLocal();$('leadModal').classList.add('hidden');renderLeads();toast('Lead adicionado')});
+  $('addGroupBtn').addEventListener('click',()=>{if(S.labelGroups.length>=3){toast('Máximo 3 grupos','error');return}S.labelGroups.push({id:'g'+Date.now(),name:'Novo Grupo',color:'#f0c226',tags:[]});saveLocal();renderLabels()});
+  $('addColBtn').addEventListener('click',addKanbanCol);
+  $('leadsSheetBtn').addEventListener('click',()=>setMainTab('leads'));
+  document.querySelectorAll('.nav-tab').forEach(b=>b.addEventListener('click',()=>setMainTab(b.dataset.main)));
+  document.querySelectorAll('.sub-tab').forEach(b=>b.addEventListener('click',()=>setSubTab(b.dataset.sub)));
+  document.querySelectorAll('.rp-tab').forEach(b=>b.addEventListener('click',()=>setRpTab(b.dataset.rp)));
+
+  // if already has stored URL, auto-connect
+  if(S.n8nUrl&&S.managerName){$('login').classList.add('hidden');$('app').classList.remove('hidden');loadHistory();S.poller=setInterval(loadHistory,5000)}
+}
+
+document.addEventListener('DOMContentLoaded',init);
+</script>
 </body>
 </html>
